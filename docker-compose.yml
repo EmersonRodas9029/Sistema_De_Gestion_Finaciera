@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: sistema_gastos_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: sistema_gastos_clientes_db
+      MYSQL_ROOT_PASSWORD: 12345678
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - sistema_gastos_net
+
+volumes:
+  mysql_data:
+
+networks:
+  sistema_gastos_net:
+    driver: bridge
