@@ -1,0 +1,22 @@
+CREATE TABLE gastos_recurrentes (
+                                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                    cliente_id BIGINT NOT NULL,
+                                    categoria_id BIGINT,
+                                    monto DECIMAL(10,2) NOT NULL,
+                                    descripcion TEXT,
+                                    frecuencia ENUM('DIARIO', 'SEMANAL', 'MENSUAL', 'ANUAL') NOT NULL,
+                                    fecha_inicio DATE NOT NULL,
+                                    fecha_fin DATE,
+                                    dia_mes INT NULL,
+                                    dia_semana INT NULL,
+                                    activo BOOLEAN DEFAULT TRUE,
+                                    ultimo_procesamiento DATE NULL,
+                                    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                    fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                    FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE,
+                                    FOREIGN KEY (categoria_id) REFERENCES categorias(id) ON DELETE SET NULL,
+                                    CONSTRAINT chk_monto_recurrente_positivo CHECK (monto > 0),
+                                    CONSTRAINT chk_fecha_fin_mayor CHECK (fecha_fin IS NULL OR fecha_fin > fecha_inicio),
+                                    CONSTRAINT chk_dia_mes_valido CHECK (dia_mes IS NULL OR (dia_mes >= 1 AND dia_mes <= 31)),
+                                    CONSTRAINT chk_dia_semana_valido CHECK (dia_semana IS NULL OR (dia_semana >= 1 AND dia_semana <= 7))
+);
