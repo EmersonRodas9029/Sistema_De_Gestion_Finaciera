@@ -25,24 +25,16 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/css/**", "/js/**", "/img/**").permitAll()
-                        .requestMatchers("/contador/**").hasRole("CONTADOR")
-                        .requestMatchers("/cliente/**").hasRole("CLIENTE")
+                        // Permitir todas las APIs de usuario para pruebas
+                        .requestMatchers("/api/usuarios/**").permitAll()
+                        // Puedes añadir más reglas si agregas endpoints privados
                         .anyRequest().authenticated()
                 )
+                // JWT y rate limit
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .formLogin(form -> form
-                        .loginPage("/auth/login")
-                        .defaultSuccessUrl("/dashboard")
-                        .permitAll()
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/auth/logout")
-                        .logoutSuccessUrl("/auth/login?logout")
-                        .permitAll()
-                );
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
