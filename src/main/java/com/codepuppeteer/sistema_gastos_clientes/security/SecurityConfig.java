@@ -27,9 +27,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/usuarios/**").permitAll()
                         .requestMatchers("/api/clientes/**").permitAll()
+                        .requestMatchers("/api/categorias/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                // JWT y rate limit
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
