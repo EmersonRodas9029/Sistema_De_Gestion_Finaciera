@@ -25,9 +25,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Permitir todas las APIs de usuario para pruebas
                         .requestMatchers("/api/usuarios/**").permitAll()
-                        // Puedes añadir más reglas si agregas endpoints privados
+                        .requestMatchers("/api/clientes/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 // JWT y rate limit
