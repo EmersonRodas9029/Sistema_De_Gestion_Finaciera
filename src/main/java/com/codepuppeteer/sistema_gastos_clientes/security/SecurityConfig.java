@@ -31,6 +31,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/gastos/**").permitAll()
                         .requestMatchers("/api/ingresos/**").permitAll()
                         .requestMatchers("/api/presupuestos/**").permitAll()
+                        .requestMatchers("/api/metas/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
