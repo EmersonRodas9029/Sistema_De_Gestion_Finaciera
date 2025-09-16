@@ -1,0 +1,4 @@
+body { background: #f8f9fa; }
+.sidebar { background: #fff; border-right: 1px solid #e6e6e6; }
+.card { border-radius: 10px; }
+.table-hover tbody tr:hover { background-color: rgba(52,58,64,0.03); }

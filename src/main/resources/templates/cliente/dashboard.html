@@ -1,0 +1,47 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: headerFragment"></head>
+<body>
+<div class="d-flex">
+    <div th:replace="fragments/sidebar :: sidebarFragment"></div>
+
+    <div class="container-fluid p-4">
+        <h2>Dashboard</h2>
+        <div class="row g-3">
+            <div class="col-md-8">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <canvas id="balanceChart" height="120"></canvas>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5>Últimos gastos</h5>
+                        <table id="recentExpenses" class="table table-striped" width="100%"></table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card mb-3 p-3">
+                    <h6>Resumen</h6>
+                    <ul class="list-unstyled">
+                        <li>Ingresos: <strong id="summaryIncomes">$0</strong></li>
+                        <li>Gastos: <strong id="summaryExpenses">$0</strong></li>
+                        <li>Saldo: <strong id="summaryBalance">$0</strong></li>
+                    </ul>
+                </div>
+
+                <div class="card p-3">
+                    <h6>Alertas</h6>
+                    <div id="alerts"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footerFragment"></div>
+</body>
+</html>

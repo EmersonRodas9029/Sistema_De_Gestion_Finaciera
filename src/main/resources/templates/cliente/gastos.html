@@ -1,0 +1,39 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: headerFragment"></head>
+<body>
+<div class="d-flex">
+    <div th:replace="fragments/sidebar :: sidebarFragment"></div>
+
+    <div class="container-fluid p-4">
+        <div class="d-flex justify-content-between mb-3">
+            <h2>Gastos</h2>
+            <button class="btn btn-primary" id="btnNewGasto">Nuevo gasto</button>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <table id="gastosTable" class="table table-hover" style="width:100%">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Monto</th>
+                        <th>Fecha</th>
+                        <th>Categoría</th>
+                        <th>Método</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal form (simple) -->
+<div th:replace="fragments/modals :: modalsFragment"></div>
+
+<div th:replace="fragments/footer :: footerFragment"></div>
+</body>
+</html>
