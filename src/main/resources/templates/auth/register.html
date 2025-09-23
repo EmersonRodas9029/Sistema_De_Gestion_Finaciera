@@ -3,132 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro</title>
-
-    <!-- Bootstrap -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/custom.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Registro - Sistema Financiero</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/custom.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
 </head>
-<body class="bg-light d-flex align-items-center" style="height:100vh;">
+<body class="bg-light">
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow-lg rounded-4 border-0">
-                <div class="card-body p-4">
-                    <div class="text-center mb-4">
-                        <img src="/img/logo.png" alt="Logo" width="80" class="mb-3">
-                        <h4 class="fw-bold">Crea tu cuenta</h4>
-                        <p class="text-muted">Regístrate como Cliente o Contador</p>
-                    </div>
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4 shadow-sm" style="width: 100%; max-width: 450px; border-radius: 12px;">
+        <div class="text-center mb-4">
+            <img src="/img/logo.png" alt="Logo" width="100">
+            <h3 class="mt-3" style="color: #800020;">Registro</h3>
+        </div>
 
-                    <form id="registerForm" novalidate>
-                        <!-- Rol -->
-                        <div class="mb-3">
-                            <label for="rol" class="form-label">Tipo de cuenta</label>
-                            <select class="form-select" id="rol" required>
-                                <option value="">Seleccione...</option>
-                                <option value="CLIENTE">Cliente</option>
-                                <option value="CONTADOR">Contador</option>
-                            </select>
-                            <div class="invalid-feedback">Seleccione un rol válido.</div>
-                        </div>
-
-                        <!-- Nombre -->
-                        <div class="mb-3">
-                            <label for="nombre" class="form-label">Nombre completo</label>
-                            <input type="text" class="form-control" id="nombre" required>
-                            <div class="invalid-feedback">Ingrese su nombre completo.</div>
-                        </div>
-
-                        <!-- Email -->
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Correo electrónico</label>
-                            <input type="email" class="form-control" id="email" required>
-                            <div class="invalid-feedback">Ingrese un correo válido.</div>
-                        </div>
-
-                        <!-- Contraseña -->
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="password" required minlength="6">
-                            <div class="invalid-feedback">La contraseña debe tener al menos 6 caracteres.</div>
-                        </div>
-
-                        <!-- Confirmar contraseña -->
-                        <div class="mb-3">
-                            <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
-                            <input type="password" class="form-control" id="confirmPassword" required>
-                            <div class="invalid-feedback">Las contraseñas no coinciden.</div>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-100" id="registerBtn">
-                            <span id="registerBtnText">Registrarse</span>
-                            <span id="loadingSpinner" class="spinner-border spinner-border-sm d-none"></span>
-                        </button>
-                    </form>
-
-                    <div class="text-center mt-4">
-                        <p class="mb-0">¿Ya tienes cuenta?
-                            <a href="/auth/login.html" class="fw-bold text-decoration-none">Inicia sesión</a>
-                        </p>
-                    </div>
-                </div>
+        <form id="registerForm" novalidate>
+            <div class="mb-3">
+                <label for="name" class="form-label">Nombre completo</label>
+                <input type="text" class="form-control" id="name" placeholder="Juan Pérez" required>
+                <div class="invalid-feedback">Ingresa tu nombre completo.</div>
             </div>
 
-            <p class="text-center text-muted mt-3 small">&copy; 2025 FinanzasApp</p>
+            <div class="mb-3">
+                <label for="email" class="form-label">Correo electrónico</label>
+                <input type="email" class="form-control" id="email" placeholder="tu@correo.com" required>
+                <div class="invalid-feedback">Ingresa un correo válido.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="password" placeholder="********" required minlength="6">
+                <div class="invalid-feedback">La contraseña debe tener al menos 6 caracteres.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
+                <input type="password" class="form-control" id="confirmPassword" placeholder="********" required>
+                <div class="invalid-feedback">Las contraseñas no coinciden.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="role" class="form-label">Rol</label>
+                <select id="role" class="form-select" required>
+                    <option value="" selected disabled>Selecciona un rol</option>
+                    <option value="CLIENTE">Cliente</option>
+                    <option value="CONTADOR">Contador</option>
+                </select>
+                <div class="invalid-feedback">Selecciona un rol válido.</div>
+            </div>
+
+            <button type="submit" class="btn w-100" style="background-color: #800020; color: #fff;">Registrarse</button>
+        </form>
+
+        <div class="mt-3 text-center">
+            <span>¿Ya tienes cuenta?</span>
+            <a href="/auth/login" class="text-decoration-none" style="color: #0A3D62;">Inicia sesión</a>
         </div>
     </div>
 </div>
 
-<!-- Scripts -->
-<script src="/js/jquery-3.6.0.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script src="/js/validation.js"></script>
-
 <script>
-    // Validación de formulario y contraseñas
-    $('#registerForm').on('submit', function(e) {
-        e.preventDefault();
-        let form = this;
-        let password = $('#password').val();
-        let confirmPassword = $('#confirmPassword').val();
-        let valid = form.checkValidity() && password === confirmPassword;
-
-        if(!valid) {
-            if(password !== confirmPassword) {
-                $('#confirmPassword')[0].setCustomValidity('Las contraseñas no coinciden');
-            } else {
-                $('#confirmPassword')[0].setCustomValidity('');
+    // Validación simple de Bootstrap y confirmación de contraseña
+    (function () {
+        'use strict';
+        const form = document.getElementById('registerForm');
+        form.addEventListener('submit', function (event) {
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            if (!form.checkValidity() || password !== confirm) {
+                event.preventDefault();
+                event.stopPropagation();
+                if (password !== confirm) {
+                    document.getElementById('confirmPassword').classList.add('is-invalid');
+                }
             }
-            e.stopPropagation();
             form.classList.add('was-validated');
-            return;
-        }
-
-        // Simular registro con spinner
-        $('#registerBtnText').addClass('d-none');
-        $('#loadingSpinner').removeClass('d-none');
-
-        setTimeout(() => {
-            alert(`Cuenta registrada como ${$('#rol').val()} (simulación)`);
-            $('#registerBtnText').removeClass('d-none');
-            $('#loadingSpinner').addClass('d-none');
-            form.reset();
-            form.classList.remove('was-validated');
-        }, 1500);
-    });
-
-    // Validación en tiempo real para email
-    $('#email').on('input', function() {
-        const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if(!pattern.test(this.value)) {
-            this.setCustomValidity('Correo inválido');
-        } else {
-            this.setCustomValidity('');
-        }
-    });
+        }, false);
+    })();
 </script>
 
 </body>
