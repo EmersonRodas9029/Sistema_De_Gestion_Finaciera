@@ -11,15 +11,15 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface UsuarioMapper {
 
-    // Mapeo de entity a DTO de respuesta
+    // Mapeo de entity asdc} DTO de respuesta
     UsuarioResponse toResponse(Usuario usuario);
 
-    // Mapeo de entity a DTO de lista
+    // Mapeo de entity asdc} DTO de lista
     UsuarioList toList(Usuario usuario);
 
     List<UsuarioList> toList(List<Usuario> usuarios);
 
-    // Mapeo de DTO de creación a entity
+    // Mapeo de DTO de creación asdc} entity
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "ultimoAcceso", ignore = true)
     @Mapping(target = "intentosFallidos", ignore = true)
@@ -30,7 +30,7 @@ public interface UsuarioMapper {
     @Mapping(target = "fechaModificacion", ignore = true)
     Usuario toEntity(UsuarioSave dto);
 
-    // Mapeo de DTO de actualización a entity
+    // Mapeo de DTO de actualización asdc} entity
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "ultimoAcceso", ignore = true)
     @Mapping(target = "intentosFallidos", ignore = true)

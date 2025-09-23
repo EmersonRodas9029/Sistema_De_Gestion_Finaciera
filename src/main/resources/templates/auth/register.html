@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+
+    <!-- Bootstrap -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/custom.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light d-flex align-items-center" style="height:100vh;">
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg rounded-4 border-0">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <img src="/img/logo.png" alt="Logo" width="80" class="mb-3">
+                        <h4 class="fw-bold">Crea tu cuenta</h4>
+                        <p class="text-muted">Regístrate como Cliente o Contador</p>
+                    </div>
+
+                    <form id="registerForm" novalidate>
+                        <!-- Rol -->
+                        <div class="mb-3">
+                            <label for="rol" class="form-label">Tipo de cuenta</label>
+                            <select class="form-select" id="rol" required>
+                                <option value="">Seleccione...</option>
+                                <option value="CLIENTE">Cliente</option>
+                                <option value="CONTADOR">Contador</option>
+                            </select>
+                            <div class="invalid-feedback">Seleccione un rol válido.</div>
+                        </div>
+
+                        <!-- Nombre -->
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre completo</label>
+                            <input type="text" class="form-control" id="nombre" required>
+                            <div class="invalid-feedback">Ingrese su nombre completo.</div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Correo electrónico</label>
+                            <input type="email" class="form-control" id="email" required>
+                            <div class="invalid-feedback">Ingrese un correo válido.</div>
+                        </div>
+
+                        <!-- Contraseña -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="password" required minlength="6">
+                            <div class="invalid-feedback">La contraseña debe tener al menos 6 caracteres.</div>
+                        </div>
+
+                        <!-- Confirmar contraseña -->
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
+                            <input type="password" class="form-control" id="confirmPassword" required>
+                            <div class="invalid-feedback">Las contraseñas no coinciden.</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100" id="registerBtn">
+                            <span id="registerBtnText">Registrarse</span>
+                            <span id="loadingSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <p class="mb-0">¿Ya tienes cuenta?
+                            <a href="/auth/login.html" class="fw-bold text-decoration-none">Inicia sesión</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-center text-muted mt-3 small">&copy; 2025 FinanzasApp</p>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="/js/jquery-3.6.0.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/validation.js"></script>
+
+<script>
+    // Validación de formulario y contraseñas
+    $('#registerForm').on('submit', function(e) {
+        e.preventDefault();
+        let form = this;
+        let password = $('#password').val();
+        let confirmPassword = $('#confirmPassword').val();
+        let valid = form.checkValidity() && password === confirmPassword;
+
+        if(!valid) {
+            if(password !== confirmPassword) {
+                $('#confirmPassword')[0].setCustomValidity('Las contraseñas no coinciden');
+            } else {
+                $('#confirmPassword')[0].setCustomValidity('');
+            }
+            e.stopPropagation();
+            form.classList.add('was-validated');
+            return;
+        }
+
+        // Simular registro con spinner
+        $('#registerBtnText').addClass('d-none');
+        $('#loadingSpinner').removeClass('d-none');
+
+        setTimeout(() => {
+            alert(`Cuenta registrada como ${$('#rol').val()} (simulación)`);
+            $('#registerBtnText').removeClass('d-none');
+            $('#loadingSpinner').addClass('d-none');
+            form.reset();
+            form.classList.remove('was-validated');
+        }, 1500);
+    });
+
+    // Validación en tiempo real para email
+    $('#email').on('input', function() {
+        const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if(!pattern.test(this.value)) {
+            this.setCustomValidity('Correo inválido');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+</script>
+
+</body>
+</html>

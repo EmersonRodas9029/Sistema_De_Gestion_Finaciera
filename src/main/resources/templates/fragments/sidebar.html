@@ -1,30 +1,10 @@
-<!doctype html>
-<html xmlns:th="http://www.thymeleaf.org" th:fragment="sidebarFragment">
-<div class="d-flex flex-column p-3 bg-white" style="width: 250px; min-height: 100vh;">
-    <a th:href="@{/}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
-        <img th:src="@{/img/logo.png}" alt="logo" width="36" class="me-2"/>
-        <span class="fs-5">Sistema Gastos</span>
-    </a>
-    <hr>
-    <ul class="nav nav-pills flex-column mb-auto">
-        <li class="nav-item"><a th:href="@{/cliente/dashboard}" class="nav-link">Dashboard</a></li>
-        <li class="nav-item"><a th:href="@{/cliente/gastos}" class="nav-link">Gastos</a></li>
-        <li class="nav-item"><a th:href="@{/cliente/ingresos}" class="nav-link">Ingresos</a></li>
-        <li class="nav-item"><a th:href="@{/cliente/presupuesto}" class="nav-link">Presupuesto</a></li>
-        <li class="nav-item"><a th:href="@{/cliente/metas}" class="nav-link">Metas</a></li>
-        <li class="nav-item"><a th:href="@{/cliente/reportes}" class="nav-link">Reportes</a></li>
-    </ul>
-    <hr/>
-    <div class="dropdown">
-        <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" id="dropdownUser"
-           data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="https://via.placeholder.com/32" alt="" class="rounded-circle me-2">
-            <strong th:text="${#authentication?.name ?: 'Usuario'}">Usuario</strong>
-        </a>
-        <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser">
-            <li><a class="dropdown-item" th:href="@{/perfil}">Perfil</a></li>
-            <li><a class="dropdown-item" th:href="@{/logout}">Cerrar sesión</a></li>
-        </ul>
-    </div>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
 </html>
