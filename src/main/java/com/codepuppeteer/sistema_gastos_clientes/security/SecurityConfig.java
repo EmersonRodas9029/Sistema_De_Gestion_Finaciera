@@ -25,6 +25,16 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        // Recursos estáticos
+                        .requestMatchers("/css/**", "/js/**", "/img/**", "/uploads/**").permitAll()
+
+                        // Páginas públicas
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/cliente/**").permitAll()
+                        .requestMatchers("/contador/**").permitAll()
+                        .requestMatchers("/common/**").permitAll()
+
+                        // Endpoints de la API
                         .requestMatchers("/api/usuarios/**").permitAll()
                         .requestMatchers("/api/clientes/**").permitAll()
                         .requestMatchers("/api/categorias/**").permitAll()
