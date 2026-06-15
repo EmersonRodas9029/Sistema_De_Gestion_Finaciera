@@ -36,11 +36,13 @@ public class Usuario {
     private Rol rol;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean activo = true;
 
     private LocalDateTime ultimoAcceso;
 
     @Column(nullable = false)
+    @Builder.Default
     private Integer intentosFallidos = 0;
 
     private LocalDateTime bloqueadoHasta;
@@ -50,9 +52,11 @@ public class Usuario {
     private LocalDateTime fechaExpiracionToken;
 
     @Column(nullable = false, updatable = false)
+    @Builder.Default
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     @Column(nullable = false)
+    @Builder.Default
     private LocalDateTime fechaModificacion = LocalDateTime.now();
 
     @PreUpdate

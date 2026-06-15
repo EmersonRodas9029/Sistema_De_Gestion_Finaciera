@@ -45,15 +45,19 @@ public class Cliente {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
+    @Builder.Default
     private TipoDocumento tipoDocumento = TipoDocumento.DNI;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean activo = true;
 
     @Column(nullable = false, updatable = false)
+    @Builder.Default
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     @Column(nullable = false)
+    @Builder.Default
     private LocalDateTime fechaModificacion = LocalDateTime.now();
 
     @PreUpdate

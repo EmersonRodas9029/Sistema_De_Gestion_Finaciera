@@ -48,6 +48,7 @@ public class Reporte {
     private String rutaArchivo;
 
     @Column(name = "fecha_generacion", nullable = false)
+    @Builder.Default
     private LocalDateTime fechaGeneracion = LocalDateTime.now();
 
     @PreUpdate

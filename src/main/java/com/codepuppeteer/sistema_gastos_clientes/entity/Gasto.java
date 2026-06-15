@@ -40,9 +40,11 @@ public class Gasto {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private MetodoPago metodoPago = MetodoPago.EFECTIVO;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean esRecurrente = false;
 
     @Enumerated(EnumType.STRING)
@@ -51,12 +53,15 @@ public class Gasto {
     private String adjunto;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean activo = true;
 
     @Column(nullable = false, updatable = false)
+    @Builder.Default
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     @Column(nullable = false)
+    @Builder.Default
     private LocalDateTime fechaModificacion = LocalDateTime.now();
 
     @PreUpdate

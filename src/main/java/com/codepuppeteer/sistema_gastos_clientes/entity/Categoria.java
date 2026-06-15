@@ -37,21 +37,27 @@ public class Categoria {
     private String descripcion;
 
     @Column(length = 7, nullable = false)
+    @Builder.Default
     private String color = "#3498db";
 
     @Column(length = 50, nullable = false)
+    @Builder.Default
     private String icono = "category";
 
     @Column(precision = 10, scale = 2, nullable = false)
+    @Builder.Default
     private BigDecimal presupuestoMensual = BigDecimal.ZERO;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean activa = true;
 
     @Column(nullable = false, updatable = false)
+    @Builder.Default
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     @Column(nullable = false)
+    @Builder.Default
     private LocalDateTime fechaModificacion = LocalDateTime.now();
 
     @PreUpdate

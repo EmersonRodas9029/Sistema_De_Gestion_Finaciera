@@ -34,16 +34,21 @@ public class Notificacion {
     private String mensaje;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean leida = false;
 
-    private LocalDateTime fechaProgramada;
+    @Builder.Default
+    private LocalDateTime fechaProgramada = null;
 
-    private LocalDateTime fechaEnviada;
+    @Builder.Default
+    private LocalDateTime fechaEnviada = null;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean activa = true;
 
     @Column(nullable = false, updatable = false)
+    @Builder.Default
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     @PrePersist

@@ -34,24 +34,30 @@ public class MetaFinanciera {
     private BigDecimal montoObjetivo;
 
     @Column(name = "monto_actual", nullable = false)
+    @Builder.Default
     private BigDecimal montoActual = BigDecimal.ZERO;
 
     private LocalDate fechaLimite;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private Prioridad prioridad = Prioridad.MEDIA;
 
+    @Builder.Default
     private Boolean activa = true;
 
+    @Builder.Default
     private Boolean completada = false;
 
     private LocalDate fechaCompletada;
 
     @Column(nullable = false, updatable = false)
+    @Builder.Default
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     @Column(nullable = false)
+    @Builder.Default
     private LocalDateTime fechaModificacion = LocalDateTime.now();
 
     @PreUpdate

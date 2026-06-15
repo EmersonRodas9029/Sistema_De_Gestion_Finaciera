@@ -37,19 +37,24 @@ public class CuentaBancaria {
     private TipoCuenta tipoCuenta;
 
     @Column(name = "saldo_actual", nullable = false)
-    private BigDecimal saldoActual;
+    @Builder.Default
+    private BigDecimal saldoActual = BigDecimal.ZERO;
 
     @Column(name = "fecha_actualizacion_saldo", nullable = false)
-    private LocalDateTime fechaActualizacionSaldo;
+    @Builder.Default
+    private LocalDateTime fechaActualizacionSaldo = null;
 
     @Column(nullable = false)
-    private Boolean activa;
+    @Builder.Default
+    private Boolean activa = true;
 
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
-    private LocalDateTime fechaCreacion;
+    @Builder.Default
+    private LocalDateTime fechaCreacion = null;
 
     @Column(name = "fecha_modificacion", nullable = false)
-    private LocalDateTime fechaModificacion;
+    @Builder.Default
+    private LocalDateTime fechaModificacion = null;
 
     @PrePersist
     public void prePersist() {

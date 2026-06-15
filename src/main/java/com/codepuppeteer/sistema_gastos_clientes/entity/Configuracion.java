@@ -36,6 +36,7 @@ public class Configuracion {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private TipoConfiguracion tipo = TipoConfiguracion.STRING;
 
     @Column(columnDefinition = "TEXT")

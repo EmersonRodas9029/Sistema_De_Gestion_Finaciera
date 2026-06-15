@@ -52,6 +52,7 @@ public class GastoRecurrente {
     private Integer diaSemana;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean activo = true;
 
     @Column(name = "ultimo_procesamiento")

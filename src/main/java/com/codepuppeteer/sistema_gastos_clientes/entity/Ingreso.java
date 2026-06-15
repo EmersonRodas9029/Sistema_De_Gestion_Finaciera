@@ -43,14 +43,17 @@ public class Ingreso {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "metodo_recepcion", nullable = false)
+    @Builder.Default
     private MetodoRecepcion metodoRecepcion = MetodoRecepcion.TRANSFERENCIA;
 
     @Column(name = "es_recurrente")
+    @Builder.Default
     private Boolean esRecurrente = false;
 
     @Enumerated(EnumType.STRING)
     private Frecuencia frecuencia;
 
+    @Builder.Default
     private Boolean activo = true;
 
     @Column(name = "fecha_creacion", updatable = false)
