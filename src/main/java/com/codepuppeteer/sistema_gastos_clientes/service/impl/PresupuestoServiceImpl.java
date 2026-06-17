@@ -46,7 +46,7 @@ public class PresupuestoServiceImpl implements PresupuestoService {
     }
 
     @Override
-    public Presupuesto actualizarPresupuestoConRelaciones(Long id, PresupuestoUpdate dto) {
+    public Presupuesto actualizarPresupuestoConRelaciones(long id, PresupuestoUpdate dto) {
         Presupuesto existente = presupuestoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Presupuesto no encontrado"));
 
@@ -64,14 +64,14 @@ public class PresupuestoServiceImpl implements PresupuestoService {
     }
 
     @Override
-    public void eliminarPresupuesto(Long id) {
+    public void eliminarPresupuesto(long id) {
         Presupuesto existente = presupuestoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Presupuesto no encontrado"));
         presupuestoRepository.delete(existente);
     }
 
     @Override
-    public Optional<Presupuesto> obtenerPresupuestoPorId(Long id) {
+    public Optional<Presupuesto> obtenerPresupuestoPorId(long id) {
         return presupuestoRepository.findById(id);
     }
 
@@ -81,12 +81,12 @@ public class PresupuestoServiceImpl implements PresupuestoService {
     }
 
     @Override
-    public List<Presupuesto> obtenerPresupuestosPorCliente(Long clienteId) {
+    public List<Presupuesto> obtenerPresupuestosPorCliente(long clienteId) {
         return presupuestoRepository.findByClienteId(clienteId);
     }
 
     @Override
-    public List<Presupuesto> obtenerPresupuestosPorCategoria(Long categoriaId) {
+    public List<Presupuesto> obtenerPresupuestosPorCategoria(long categoriaId) {
         return presupuestoRepository.findByCategoriaId(categoriaId);
     }
 }

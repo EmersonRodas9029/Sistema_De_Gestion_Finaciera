@@ -39,7 +39,7 @@ public class CategoriaServiceImpl implements CategoriaService {
     }
 
     @Override
-    public CategoriaResponse update(Long id, CategoriaUpdate dto) {
+    public CategoriaResponse update(long id, CategoriaUpdate dto) {
         Categoria categoria = categoriaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con id: " + id));
 
@@ -48,21 +48,21 @@ public class CategoriaServiceImpl implements CategoriaService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(long id) {
         Categoria categoria = categoriaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con id: " + id));
         categoriaRepository.delete(categoria);
     }
 
     @Override
-    public CategoriaResponse getById(Long id) {
+    public CategoriaResponse getById(long id) {
         Categoria categoria = categoriaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con id: " + id));
         return categoriaMapper.toResponse(categoria);
     }
 
     @Override
-    public List<CategoriaList> getAllByCliente(Long clienteId) {
+    public List<CategoriaList> getAllByCliente(long clienteId) {
         return categoriaMapper.toList(categoriaRepository.findByClienteId(clienteId));
     }
 }

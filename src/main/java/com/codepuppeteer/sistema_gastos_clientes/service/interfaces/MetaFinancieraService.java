@@ -7,15 +7,15 @@ import java.util.Optional;
 
 public interface MetaFinancieraService {
 
-    MetaFinanciera crearMeta(MetaFinanciera meta, Long clienteId);
+    MetaFinanciera crearMeta(MetaFinanciera meta, long clienteId);
 
-    MetaFinanciera actualizarMeta(Long id, MetaFinanciera meta);
+    MetaFinanciera actualizarMeta(long id, MetaFinanciera meta);
 
-    void eliminarMeta(Long id);
+    void eliminarMeta(long id);
 
-    Optional<MetaFinanciera> obtenerMetaPorId(Long id);
+    Optional<MetaFinanciera> obtenerMetaPorId(long id);
 
     List<MetaFinanciera> obtenerTodasLasMetas();
 
-    List<MetaFinanciera> obtenerMetasPorCliente(Long clienteId);
+    List<MetaFinanciera> obtenerMetasPorCliente(long clienteId);
 }

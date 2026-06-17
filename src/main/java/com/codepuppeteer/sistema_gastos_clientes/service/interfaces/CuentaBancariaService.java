@@ -9,11 +9,11 @@ public interface CuentaBancariaService {
 
     CuentaBancaria crearCuentaConCliente(CuentaBancariaSave dto);
 
-    CuentaBancaria actualizarCuentaConCliente(Long id, CuentaBancariaUpdate dto);
+    CuentaBancaria actualizarCuentaConCliente(long id, CuentaBancariaUpdate dto);
 
-    void eliminarCuenta(Long id);
+    void eliminarCuenta(long id);
 
-    Optional<CuentaBancaria> obtenerCuentaPorId(Long id);
+    Optional<CuentaBancaria> obtenerCuentaPorId(long id);
 
     List<CuentaBancaria> obtenerTodasLasCuentas();
 }

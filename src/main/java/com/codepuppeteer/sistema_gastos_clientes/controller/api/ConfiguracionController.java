@@ -25,7 +25,7 @@ public class ConfiguracionController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ConfiguracionResponse> getById(@PathVariable Long id) {
+    public ResponseEntity<ConfiguracionResponse> getById(@PathVariable long id) {
         Configuracion config = service.obtenerPorId(id)
                 .orElseThrow(() -> new RuntimeException("Configuración no encontrada"));
         return ResponseEntity.ok(mapper.toResponse(config));
@@ -39,14 +39,14 @@ public class ConfiguracionController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ConfiguracionResponse> update(
-            @PathVariable Long id,
+            @PathVariable long id,
             @RequestBody ConfiguracionUpdate dto) {
         Configuracion actualizado = service.actualizarConfiguracion(id, dto);
         return ResponseEntity.ok(mapper.toResponse(actualizado));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable long id) {
         service.eliminarConfiguracion(id);
         return ResponseEntity.noContent().build();
     }

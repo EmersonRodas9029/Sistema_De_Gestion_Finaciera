@@ -9,10 +9,10 @@ import java.util.Optional;
 
 public interface PresupuestoService {
     Presupuesto crearPresupuestoConRelaciones(PresupuestoSave dto);
-    Presupuesto actualizarPresupuestoConRelaciones(Long id, PresupuestoUpdate dto);
-    void eliminarPresupuesto(Long id);
-    Optional<Presupuesto> obtenerPresupuestoPorId(Long id);
+    Presupuesto actualizarPresupuestoConRelaciones(long id, PresupuestoUpdate dto);
+    void eliminarPresupuesto(long id);
+    Optional<Presupuesto> obtenerPresupuestoPorId(long id);
     List<Presupuesto> obtenerTodosLosPresupuestos();
-    List<Presupuesto> obtenerPresupuestosPorCliente(Long clienteId);
-    List<Presupuesto> obtenerPresupuestosPorCategoria(Long categoriaId);
+    List<Presupuesto> obtenerPresupuestosPorCliente(long clienteId);
+    List<Presupuesto> obtenerPresupuestosPorCategoria(long categoriaId);
 }

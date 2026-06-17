@@ -35,7 +35,7 @@ public class ConfiguracionServiceImpl implements ConfiguracionService {
     }
 
     @Override
-    public Configuracion actualizarConfiguracion(Long id, ConfiguracionUpdate dto) {
+    public Configuracion actualizarConfiguracion(long id, ConfiguracionUpdate dto) {
         Configuracion config = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Configuración no encontrada"));
 
@@ -45,14 +45,14 @@ public class ConfiguracionServiceImpl implements ConfiguracionService {
     }
 
     @Override
-    public void eliminarConfiguracion(Long id) {
+    public void eliminarConfiguracion(long id) {
         Configuracion config = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Configuración no encontrada"));
         repository.delete(config);
     }
 
     @Override
-    public Optional<Configuracion> obtenerPorId(Long id) {
+    public Optional<Configuracion> obtenerPorId(long id) {
         return repository.findById(id);
     }
 

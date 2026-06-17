@@ -46,7 +46,7 @@ public class GastoServiceImpl implements GastoService {
     }
 
     @Override
-    public Gasto actualizarGastoConRelaciones(Long id, GastoUpdate gastoUpdate) {
+    public Gasto actualizarGastoConRelaciones(long id, GastoUpdate gastoUpdate) {
         Gasto existente = gastoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Gasto no encontrado"));
 
@@ -64,14 +64,14 @@ public class GastoServiceImpl implements GastoService {
     }
 
     @Override
-    public void eliminarGasto(Long id) {
+    public void eliminarGasto(long id) {
         Gasto gasto = gastoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Gasto no encontrado"));
         gastoRepository.delete(gasto);
     }
 
     @Override
-    public Optional<Gasto> obtenerGastoPorId(Long id) {
+    public Optional<Gasto> obtenerGastoPorId(long id) {
         return gastoRepository.findById(id);
     }
 

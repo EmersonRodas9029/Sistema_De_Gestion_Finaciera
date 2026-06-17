@@ -8,11 +8,11 @@ public interface CategoriaService {
 
     CategoriaResponse create(CategoriaSave dto);
 
-    CategoriaResponse update(Long id, CategoriaUpdate dto);
+    CategoriaResponse update(long id, CategoriaUpdate dto);
 
-    void delete(Long id);
+    void delete(long id);
 
-    CategoriaResponse getById(Long id);
+    CategoriaResponse getById(long id);
 
-    List<CategoriaList> getAllByCliente(Long clienteId);
+    List<CategoriaList> getAllByCliente(long clienteId);
 }

@@ -11,11 +11,11 @@ public interface GastoService {
 
     Gasto crearGastoConRelaciones(GastoSave gastoSave);
 
-    Gasto actualizarGastoConRelaciones(Long id, GastoUpdate gastoUpdate);
+    Gasto actualizarGastoConRelaciones(long id, GastoUpdate gastoUpdate);
 
-    void eliminarGasto(Long id);
+    void eliminarGasto(long id);
 
-    Optional<Gasto> obtenerGastoPorId(Long id);
+    Optional<Gasto> obtenerGastoPorId(long id);
 
     List<Gasto> obtenerTodosLosGastos();
 }

@@ -8,11 +8,11 @@ public interface IngresoService {
 
     IngresoResponse crearIngreso(IngresoSave dto);
 
-    IngresoResponse actualizarIngreso(Long id, IngresoUpdate dto);
+    IngresoResponse actualizarIngreso(long id, IngresoUpdate dto);
 
-    void eliminarIngreso(Long id);
+    void eliminarIngreso(long id);
 
-    IngresoResponse obtenerIngresoPorId(Long id);
+    IngresoResponse obtenerIngresoPorId(long id);
 
     List<IngresoList> obtenerTodosLosIngresos();
 }

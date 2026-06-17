@@ -21,23 +21,23 @@ public class GastoRecurrenteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GastoRecurrenteResponse> update(@PathVariable Long id, @RequestBody GastoRecurrenteUpdate dto) {
+    public ResponseEntity<GastoRecurrenteResponse> update(@PathVariable long id, @RequestBody GastoRecurrenteUpdate dto) {
         return ResponseEntity.ok(service.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GastoRecurrenteResponse> getById(@PathVariable Long id) {
+    public ResponseEntity<GastoRecurrenteResponse> getById(@PathVariable long id) {
         return ResponseEntity.ok(service.getById(id));
     }
 
     @GetMapping("/cliente/{clienteId}")
-    public ResponseEntity<List<GastoRecurrenteList>> getAllByCliente(@PathVariable Long clienteId) {
+    public ResponseEntity<List<GastoRecurrenteList>> getAllByCliente(@PathVariable long clienteId) {
         return ResponseEntity.ok(service.getAllByCliente(clienteId));
     }
 }

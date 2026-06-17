@@ -22,7 +22,7 @@ public class MetaFinancieraServiceImpl implements MetaFinancieraService {
     private final ClienteRepository clienteRepository;
 
     @Override
-    public MetaFinanciera crearMeta(MetaFinanciera meta, Long clienteId) {
+    public MetaFinanciera crearMeta(MetaFinanciera meta, long clienteId) {
         Cliente cliente = clienteRepository.findById(clienteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
         meta.setCliente(cliente);
@@ -30,7 +30,7 @@ public class MetaFinancieraServiceImpl implements MetaFinancieraService {
     }
 
     @Override
-    public MetaFinanciera actualizarMeta(Long id, MetaFinanciera meta) {
+    public MetaFinanciera actualizarMeta(long id, MetaFinanciera meta) {
         MetaFinanciera existente = metaFinancieraRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Meta financiera no encontrada"));
 
@@ -48,14 +48,14 @@ public class MetaFinancieraServiceImpl implements MetaFinancieraService {
     }
 
     @Override
-    public void eliminarMeta(Long id) {
+    public void eliminarMeta(long id) {
         MetaFinanciera meta = metaFinancieraRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Meta financiera no encontrada"));
         metaFinancieraRepository.delete(meta);
     }
 
     @Override
-    public Optional<MetaFinanciera> obtenerMetaPorId(Long id) {
+    public Optional<MetaFinanciera> obtenerMetaPorId(long id) {
         return metaFinancieraRepository.findById(id);
     }
 
@@ -65,7 +65,7 @@ public class MetaFinancieraServiceImpl implements MetaFinancieraService {
     }
 
     @Override
-    public List<MetaFinanciera> obtenerMetasPorCliente(Long clienteId) {
+    public List<MetaFinanciera> obtenerMetasPorCliente(long clienteId) {
         return metaFinancieraRepository.findByClienteId(clienteId);
     }
 }

@@ -26,7 +26,7 @@ public class MetaFinancieraController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MetaFinancieraResponse> getById(@PathVariable Long id) {
+    public ResponseEntity<MetaFinancieraResponse> getById(@PathVariable long id) {
         MetaFinanciera meta = metaFinancieraService.obtenerMetaPorId(id)
                 .orElseThrow(() -> new RuntimeException("Meta financiera no encontrada"));
         return ResponseEntity.ok(metaFinancieraMapper.toResponse(meta));
@@ -39,7 +39,7 @@ public class MetaFinancieraController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MetaFinancieraResponse> update(@PathVariable Long id, @RequestBody MetaFinancieraUpdate dto) {
+    public ResponseEntity<MetaFinancieraResponse> update(@PathVariable long id, @RequestBody MetaFinancieraUpdate dto) {
         MetaFinanciera existente = metaFinancieraService.obtenerMetaPorId(id)
                 .orElseThrow(() -> new RuntimeException("Meta financiera no encontrada"));
 
@@ -50,7 +50,7 @@ public class MetaFinancieraController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable long id) {
         metaFinancieraService.eliminarMeta(id);
         return ResponseEntity.noContent().build();
     }

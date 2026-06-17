@@ -26,7 +26,7 @@ public class GastoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GastoResponse> getGastoById(@PathVariable Long id) {
+    public ResponseEntity<GastoResponse> getGastoById(@PathVariable long id) {
         Gasto gasto = gastoService.obtenerGastoPorId(id)
                 .orElseThrow(() -> new RuntimeException("Gasto no encontrado"));
         return ResponseEntity.ok(gastoMapper.toResponse(gasto));
@@ -40,7 +40,7 @@ public class GastoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<GastoResponse> updateGasto(
-            @PathVariable Long id,
+            @PathVariable long id,
             @RequestBody GastoUpdate gastoUpdate) {
 
         Gasto actualizado = gastoService.actualizarGastoConRelaciones(id, gastoUpdate);
@@ -48,7 +48,7 @@ public class GastoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGasto(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteGasto(@PathVariable long id) {
         gastoService.eliminarGasto(id);
         return ResponseEntity.noContent().build();
     }

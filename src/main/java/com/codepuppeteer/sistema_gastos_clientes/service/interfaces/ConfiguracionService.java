@@ -10,11 +10,11 @@ public interface ConfiguracionService {
 
     Configuracion crearConfiguracion(ConfiguracionSave dto);
 
-    Configuracion actualizarConfiguracion(Long id, ConfiguracionUpdate dto);
+    Configuracion actualizarConfiguracion(long id, ConfiguracionUpdate dto);
 
-    void eliminarConfiguracion(Long id);
+    void eliminarConfiguracion(long id);
 
-    Optional<Configuracion> obtenerPorId(Long id);
+    Optional<Configuracion> obtenerPorId(long id);
 
     List<Configuracion> obtenerTodas();
 }

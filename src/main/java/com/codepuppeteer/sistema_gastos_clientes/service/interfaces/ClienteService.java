@@ -8,11 +8,11 @@ public interface ClienteService {
 
     ClienteResponse createCliente(ClienteSave dto);
 
-    ClienteResponse updateCliente(Long id, ClienteUpdate dto);
+    ClienteResponse updateCliente(long id, ClienteUpdate dto);
 
-    void deleteCliente(Long id);
+    void deleteCliente(long id);
 
-    ClienteResponse getClienteById(Long id);
+    ClienteResponse getClienteById(long id);
 
     List<ClienteList> getAllClientes();
 }

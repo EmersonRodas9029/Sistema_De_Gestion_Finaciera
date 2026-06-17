@@ -5,32 +5,29 @@ import com.codepuppeteer.sistema_gastos_clientes.entity.Reporte;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
-public interface ReporteMapper {
+@Mapper(componentModel = "spring", uses = {ClienteMapper.class, UsuarioMapper.class})
+public abstract class ReporteMapper {
 
-    ReporteMapper INSTANCE = Mappers.getMapper(ReporteMapper.class);
+    @Mapping(source = "cliente.id", target = "clienteId")
+    @Mapping(source = "contador.id", target = "contadorId")
+    public abstract ReporteResponse toResponse(Reporte reporte);
 
-    @Mapping(target = "clienteId", source = "cliente.id")
-    @Mapping(target = "contadorId", source = "contador.id")
-    ReporteResponse toResponse(Reporte reporte);
+    public abstract ReporteList toList(Reporte reporte);
 
-    ReporteList toList(Reporte reporte);
+    public abstract List<ReporteList> toList(List<Reporte> reportes);
 
-    List<ReporteList> toList(List<Reporte> reportes);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "cliente", source = "clienteId", qualifiedByName = "toCliente")
+    @Mapping(target = "contador", source = "contadorId", qualifiedByName = "toUsuario")
+    @Mapping(target = "fechaGeneracion", ignore = true)
+    public abstract Reporte toEntity(ReporteSave dto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "cliente", ignore = true)
     @Mapping(target = "contador", ignore = true)
     @Mapping(target = "fechaGeneracion", ignore = true)
-    Reporte toEntity(ReporteSave dto);
-
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "cliente", ignore = true)
-    @Mapping(target = "contador", ignore = true)
-    @Mapping(target = "fechaGeneracion", ignore = true)
-    void updateFromDto(ReporteUpdate dto, @MappingTarget Reporte entity);
+    public abstract void updateFromDto(ReporteUpdate dto, @MappingTarget Reporte entity);
 }

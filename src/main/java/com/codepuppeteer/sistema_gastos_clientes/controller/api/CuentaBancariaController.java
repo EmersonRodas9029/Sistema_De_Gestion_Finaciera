@@ -25,7 +25,7 @@ public class CuentaBancariaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CuentaBancariaResponse> getCuentaById(@PathVariable Long id) {
+    public ResponseEntity<CuentaBancariaResponse> getCuentaById(@PathVariable long id) {
         CuentaBancaria cuenta = cuentaService.obtenerCuentaPorId(id)
                 .orElseThrow(() -> new com.codepuppeteer.sistema_gastos_clientes.exception.ResourceNotFoundException("Cuenta no encontrada"));
         return ResponseEntity.ok(mapper.toResponse(cuenta));
@@ -39,12 +39,9 @@ public class CuentaBancariaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<CuentaBancariaResponse> updateCuenta(
-            @PathVariable Long id,
+            @PathVariable long id,
             @RequestBody CuentaBancariaUpdate dto) {
 
-        if (id == null) {
-            throw new IllegalArgumentException("El ID no puede ser null");
-        }
 
         CuentaBancaria actualizado = cuentaService.actualizarCuentaConCliente(id, dto);
         return ResponseEntity.ok(mapper.toResponse(actualizado));
@@ -52,10 +49,7 @@ public class CuentaBancariaController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCuenta(@PathVariable Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("El ID no puede ser null");
-        }
+    public ResponseEntity<Void> deleteCuenta(@PathVariable long id) {
 
         cuentaService.eliminarCuenta(id);
         return ResponseEntity.noContent().build();

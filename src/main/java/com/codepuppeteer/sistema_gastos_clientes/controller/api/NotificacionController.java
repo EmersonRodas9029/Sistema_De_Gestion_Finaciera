@@ -26,7 +26,7 @@ public class NotificacionController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<NotificacionResponse> getById(@PathVariable Long id) {
+    public ResponseEntity<NotificacionResponse> getById(@PathVariable long id) {
         Notificacion notificacion = service.obtenerNotificacionPorId(id)
                 .orElseThrow(() -> new RuntimeException("Notificación no encontrada"));
         return ResponseEntity.ok(mapper.toResponse(notificacion));
@@ -40,14 +40,14 @@ public class NotificacionController {
 
     @PutMapping("/{id}")
     public ResponseEntity<NotificacionResponse> update(
-            @PathVariable Long id,
+            @PathVariable long id,
             @RequestBody NotificacionUpdate dto) {
         Notificacion actualizado = service.actualizarNotificacion(id, dto);
         return ResponseEntity.ok(mapper.toResponse(actualizado));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable long id) {
         service.eliminarNotificacion(id);
         return ResponseEntity.noContent().build();
     }

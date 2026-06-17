@@ -10,11 +10,11 @@ public interface NotificacionService {
 
     Notificacion crearNotificacion(NotificacionSave dto);
 
-    Notificacion actualizarNotificacion(Long id, NotificacionUpdate dto);
+    Notificacion actualizarNotificacion(long id, NotificacionUpdate dto);
 
-    void eliminarNotificacion(Long id);
+    void eliminarNotificacion(long id);
 
-    Optional<Notificacion> obtenerNotificacionPorId(Long id);
+    Optional<Notificacion> obtenerNotificacionPorId(long id);
 
     List<Notificacion> obtenerTodasLasNotificaciones();
 }

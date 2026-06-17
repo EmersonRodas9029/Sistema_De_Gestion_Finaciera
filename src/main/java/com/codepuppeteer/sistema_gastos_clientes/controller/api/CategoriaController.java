@@ -23,24 +23,24 @@ public class CategoriaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoriaResponse> update(@PathVariable Long id,
+    public ResponseEntity<CategoriaResponse> update(@PathVariable long id,
                                                     @Valid @RequestBody CategoriaUpdate dto) {
         return ResponseEntity.ok(categoriaService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable long id) {
         categoriaService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoriaResponse> getById(@PathVariable Long id) {
+    public ResponseEntity<CategoriaResponse> getById(@PathVariable long id) {
         return ResponseEntity.ok(categoriaService.getById(id));
     }
 
     @GetMapping("/cliente/{clienteId}")
-    public ResponseEntity<List<CategoriaList>> getAllByCliente(@PathVariable Long clienteId) {
+    public ResponseEntity<List<CategoriaList>> getAllByCliente(@PathVariable long clienteId) {
         return ResponseEntity.ok(categoriaService.getAllByCliente(clienteId));
     }
 }

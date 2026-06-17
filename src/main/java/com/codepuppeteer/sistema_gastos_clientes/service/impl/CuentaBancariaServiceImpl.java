@@ -44,7 +44,7 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
 
 
     @Override
-    public CuentaBancaria actualizarCuentaConCliente(Long id, CuentaBancariaUpdate dto) {
+    public CuentaBancaria actualizarCuentaConCliente(long id, CuentaBancariaUpdate dto) {
         CuentaBancaria cuenta = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cuenta no encontrada"));
 
@@ -65,14 +65,14 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
     }
 
     @Override
-    public void eliminarCuenta(Long id) {
+    public void eliminarCuenta(long id) {
         CuentaBancaria cuenta = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cuenta no encontrada"));
         repository.delete(cuenta);
     }
 
     @Override
-    public Optional<CuentaBancaria> obtenerCuentaPorId(Long id) {
+    public Optional<CuentaBancaria> obtenerCuentaPorId(long id) {
         return repository.findById(id);
     }
 

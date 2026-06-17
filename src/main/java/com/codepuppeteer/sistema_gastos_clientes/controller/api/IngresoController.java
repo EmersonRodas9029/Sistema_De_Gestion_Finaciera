@@ -21,18 +21,18 @@ public class IngresoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<IngresoResponse> actualizarIngreso(@PathVariable Long id, @RequestBody IngresoUpdate dto) {
+    public ResponseEntity<IngresoResponse> actualizarIngreso(@PathVariable long id, @RequestBody IngresoUpdate dto) {
         return ResponseEntity.ok(ingresoService.actualizarIngreso(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarIngreso(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarIngreso(@PathVariable long id) {
         ingresoService.eliminarIngreso(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<IngresoResponse> obtenerIngresoPorId(@PathVariable Long id) {
+    public ResponseEntity<IngresoResponse> obtenerIngresoPorId(@PathVariable long id) {
         return ResponseEntity.ok(ingresoService.obtenerIngresoPorId(id));
     }
 

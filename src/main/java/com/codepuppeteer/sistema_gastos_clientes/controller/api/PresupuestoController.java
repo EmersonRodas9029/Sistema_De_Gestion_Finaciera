@@ -26,7 +26,7 @@ public class PresupuestoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PresupuestoResponse> getById(@PathVariable Long id) {
+    public ResponseEntity<PresupuestoResponse> getById(@PathVariable long id) {
         Presupuesto presupuesto = service.obtenerPresupuestoPorId(id)
                 .orElseThrow(() -> new RuntimeException("Presupuesto no encontrado"));
         return ResponseEntity.ok(mapper.toResponse(presupuesto));
@@ -40,14 +40,14 @@ public class PresupuestoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<PresupuestoResponse> update(
-            @PathVariable Long id,
+            @PathVariable long id,
             @RequestBody PresupuestoUpdate dto) {
         Presupuesto actualizado = service.actualizarPresupuestoConRelaciones(id, dto);
         return ResponseEntity.ok(mapper.toResponse(actualizado));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable long id) {
         service.eliminarPresupuesto(id);
         return ResponseEntity.noContent().build();
     }

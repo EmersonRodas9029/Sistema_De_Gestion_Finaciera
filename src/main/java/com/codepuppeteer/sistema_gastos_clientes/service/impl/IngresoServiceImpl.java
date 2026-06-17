@@ -33,7 +33,7 @@ public class IngresoServiceImpl implements IngresoService {
     }
 
     @Override
-    public IngresoResponse actualizarIngreso(Long id, IngresoUpdate dto) {
+    public IngresoResponse actualizarIngreso(long id, IngresoUpdate dto) {
         Ingreso ingreso = ingresoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Ingreso no encontrado con id: " + id));
 
@@ -43,7 +43,7 @@ public class IngresoServiceImpl implements IngresoService {
     }
 
     @Override
-    public void eliminarIngreso(Long id) {
+    public void eliminarIngreso(long id) {
         Ingreso ingreso = ingresoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Ingreso no encontrado con id: " + id));
 
@@ -51,7 +51,7 @@ public class IngresoServiceImpl implements IngresoService {
     }
 
     @Override
-    public IngresoResponse obtenerIngresoPorId(Long id) {
+    public IngresoResponse obtenerIngresoPorId(long id) {
         Ingreso ingreso = ingresoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Ingreso no encontrado con id: " + id));
 

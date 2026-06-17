@@ -5,21 +5,22 @@ import com.codepuppeteer.sistema_gastos_clientes.entity.Usuario;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface UsuarioMapper {
+public abstract class UsuarioMapper {
 
-    // Mapeo de entity asdc} DTO de respuesta
-    UsuarioResponse toResponse(Usuario usuario);
+    // Mapeo de entity a DTO de respuesta
+    public abstract UsuarioResponse toResponse(Usuario usuario);
 
-    // Mapeo de entity asdc} DTO de lista
-    UsuarioList toList(Usuario usuario);
+    // Mapeo de entity a DTO de lista
+    public abstract UsuarioList toList(Usuario usuario);
 
-    List<UsuarioList> toList(List<Usuario> usuarios);
+    public abstract List<UsuarioList> toList(List<Usuario> usuarios);
 
-    // Mapeo de DTO de creación asdc} entity
+    // Mapeo de DTO de creación a entity
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "ultimoAcceso", ignore = true)
     @Mapping(target = "intentosFallidos", ignore = true)
@@ -28,9 +29,9 @@ public interface UsuarioMapper {
     @Mapping(target = "fechaExpiracionToken", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaModificacion", ignore = true)
-    Usuario toEntity(UsuarioSave dto);
+    public abstract Usuario toEntity(UsuarioSave dto);
 
-    // Mapeo de DTO de actualización asdc} entity
+    // Mapeo de DTO de actualización a entity
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "ultimoAcceso", ignore = true)
     @Mapping(target = "intentosFallidos", ignore = true)
@@ -39,5 +40,23 @@ public interface UsuarioMapper {
     @Mapping(target = "fechaExpiracionToken", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaModificacion", ignore = true)
-    void updateFromDto(UsuarioUpdate dto, @MappingTarget Usuario entity);
+    public abstract void updateFromDto(UsuarioUpdate dto, @MappingTarget Usuario entity);
+
+    @Named("toUsuario")
+    protected Usuario toUsuario(Long id) {
+        if (id == null) {
+            return null;
+        }
+        Usuario usuario = new Usuario();
+        usuario.setId(id);
+        return usuario;
+    }
+
+    @Named("toId")
+    protected Long toId(Usuario usuario) {
+        if (usuario == null) {
+            return null;
+        }
+        return usuario.getId();
+    }
 }

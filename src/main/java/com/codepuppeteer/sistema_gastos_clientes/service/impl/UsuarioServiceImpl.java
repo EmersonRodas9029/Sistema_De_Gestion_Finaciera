@@ -29,7 +29,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UsuarioResponse actualizarUsuario(Long id, UsuarioUpdate usuarioDto) {
+    public UsuarioResponse actualizarUsuario(long id, UsuarioUpdate usuarioDto) {
         Usuario existente = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
         usuarioMapper.updateFromDto(usuarioDto, existente);
@@ -37,14 +37,14 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public void eliminarUsuario(Long id) {
+    public void eliminarUsuario(long id) {
         Usuario existente = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
         usuarioRepository.delete(existente);
     }
 
     @Override
-    public UsuarioResponse obtenerUsuarioPorId(Long id) {
+    public UsuarioResponse obtenerUsuarioPorId(long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
         return usuarioMapper.toResponse(usuario);
@@ -59,7 +59,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public void bloquearUsuario(Long id) {
+    public void bloquearUsuario(long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
         usuario.setActivo(false);
@@ -67,7 +67,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public void desbloquearUsuario(Long id) {
+    public void desbloquearUsuario(long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
         usuario.setActivo(true);

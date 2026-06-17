@@ -26,7 +26,7 @@ public class ReporteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReporteResponse> getReporteById(@PathVariable Long id) {
+    public ResponseEntity<ReporteResponse> getReporteById(@PathVariable long id) {
         Reporte reporte = service.obtenerReportePorId(id)
                 .orElseThrow(() -> new RuntimeException("Reporte no encontrado"));
         return ResponseEntity.ok(mapper.toResponse(reporte));
@@ -40,14 +40,14 @@ public class ReporteController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ReporteResponse> updateReporte(
-            @PathVariable Long id,
+            @PathVariable long id,
             @RequestBody ReporteUpdate dto) {
         Reporte actualizado = service.actualizarReporte(id, dto);
         return ResponseEntity.ok(mapper.toResponse(actualizado));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReporte(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteReporte(@PathVariable long id) {
         service.eliminarReporte(id);
         return ResponseEntity.noContent().build();
     }

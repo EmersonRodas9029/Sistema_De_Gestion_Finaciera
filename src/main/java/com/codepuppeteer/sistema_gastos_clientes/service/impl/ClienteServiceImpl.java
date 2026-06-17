@@ -34,7 +34,7 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    public ClienteResponse updateCliente(Long id, ClienteUpdate dto) {
+    public ClienteResponse updateCliente(long id, ClienteUpdate dto) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + id));
         clienteMapper.updateFromDto(dto, cliente);
@@ -42,14 +42,14 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    public void deleteCliente(Long id) {
+    public void deleteCliente(long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + id));
         clienteRepository.delete(cliente);
     }
 
     @Override
-    public ClienteResponse getClienteById(Long id) {
+    public ClienteResponse getClienteById(long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + id));
         return clienteMapper.toResponse(cliente);

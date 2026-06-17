@@ -44,7 +44,7 @@ public class ReporteServiceImpl implements ReporteService {
     }
 
     @Override
-    public Reporte actualizarReporte(Long id, ReporteUpdate dto) {
+    public Reporte actualizarReporte(long id, ReporteUpdate dto) {
         Reporte existente = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Reporte no encontrado"));
 
@@ -66,14 +66,14 @@ public class ReporteServiceImpl implements ReporteService {
     }
 
     @Override
-    public void eliminarReporte(Long id) {
+    public void eliminarReporte(long id) {
         Reporte reporte = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Reporte no encontrado"));
         repository.delete(reporte);
     }
 
     @Override
-    public Optional<Reporte> obtenerReportePorId(Long id) {
+    public Optional<Reporte> obtenerReportePorId(long id) {
         return repository.findById(id);
     }
 

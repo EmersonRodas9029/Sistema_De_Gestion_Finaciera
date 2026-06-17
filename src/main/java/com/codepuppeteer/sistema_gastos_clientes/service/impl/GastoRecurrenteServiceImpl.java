@@ -43,7 +43,7 @@ public class GastoRecurrenteServiceImpl implements GastoRecurrenteService {
 
     @Override
     @Transactional
-    public GastoRecurrenteResponse update(Long id, GastoRecurrenteUpdate dto) {
+    public GastoRecurrenteResponse update(long id, GastoRecurrenteUpdate dto) {
         GastoRecurrente entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Gasto recurrente no encontrado"));
         mapper.updateFromDto(dto, entity);
@@ -53,21 +53,21 @@ public class GastoRecurrenteServiceImpl implements GastoRecurrenteService {
 
     @Override
     @Transactional
-    public void delete(Long id) {
+    public void delete(long id) {
         GastoRecurrente entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Gasto recurrente no encontrado"));
         repository.delete(entity);
     }
 
     @Override
-    public GastoRecurrenteResponse getById(Long id) {
+    public GastoRecurrenteResponse getById(long id) {
         return repository.findById(id)
                 .map(mapper::toResponse)
                 .orElseThrow(() -> new ResourceNotFoundException("Gasto recurrente no encontrado"));
     }
 
     @Override
-    public List<GastoRecurrenteList> getAllByCliente(Long clienteId) {
+    public List<GastoRecurrenteList> getAllByCliente(long clienteId) {
         return mapper.toList(repository.findByClienteId(clienteId));
     }
 }

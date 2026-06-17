@@ -10,15 +10,15 @@ public interface UsuarioService {
 
     UsuarioResponse crearUsuario(UsuarioSave usuario);
 
-    UsuarioResponse actualizarUsuario(Long id, UsuarioUpdate usuario);
+    UsuarioResponse actualizarUsuario(long id, UsuarioUpdate usuario);
 
-    void eliminarUsuario(Long id);
+    void eliminarUsuario(long id);
 
-    UsuarioResponse obtenerUsuarioPorId(Long id);
+    UsuarioResponse obtenerUsuarioPorId(long id);
 
     List<UsuarioResponse> obtenerTodosLosUsuarios();
 
-    void bloquearUsuario(Long id);
+    void bloquearUsuario(long id);
 
-    void desbloquearUsuario(Long id);
+    void desbloquearUsuario(long id);
 }

@@ -10,11 +10,11 @@ public interface ReporteService {
 
     Reporte crearReporte(ReporteSave dto);
 
-    Reporte actualizarReporte(Long id, ReporteUpdate dto);
+    Reporte actualizarReporte(long id, ReporteUpdate dto);
 
-    void eliminarReporte(Long id);
+    void eliminarReporte(long id);
 
-    Optional<Reporte> obtenerReportePorId(Long id);
+    Optional<Reporte> obtenerReportePorId(long id);
 
     List<Reporte> obtenerTodosLosReportes();
 }

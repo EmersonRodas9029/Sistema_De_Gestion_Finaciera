@@ -38,7 +38,7 @@ public class NotificacionServiceImpl implements NotificacionService {
     }
 
     @Override
-    public Notificacion actualizarNotificacion(Long id, NotificacionUpdate dto) {
+    public Notificacion actualizarNotificacion(long id, NotificacionUpdate dto) {
         Notificacion notificacion = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Notificación no encontrada"));
 
@@ -47,14 +47,14 @@ public class NotificacionServiceImpl implements NotificacionService {
     }
 
     @Override
-    public void eliminarNotificacion(Long id) {
+    public void eliminarNotificacion(long id) {
         Notificacion notificacion = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Notificación no encontrada"));
         repository.delete(notificacion);
     }
 
     @Override
-    public Optional<Notificacion> obtenerNotificacionPorId(Long id) {
+    public Optional<Notificacion> obtenerNotificacionPorId(long id) {
         return repository.findById(id);
     }
 
