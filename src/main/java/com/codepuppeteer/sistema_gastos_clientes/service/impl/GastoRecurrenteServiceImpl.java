@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -28,10 +29,11 @@ public class GastoRecurrenteServiceImpl implements GastoRecurrenteService {
     @Override
     @Transactional
     public GastoRecurrenteResponse save(GastoRecurrenteSave dto) {
-        Cliente cliente = clienteRepository.findById(dto.clienteId())
+        Cliente cliente = clienteRepository.findById(Objects.requireNonNull(dto.clienteId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
-        Categoria categoria = dto.categoriaId() != null
-                ? categoriaRepository.findById(dto.categoriaId())
+        Long catId = dto.categoriaId();
+        Categoria categoria = catId != null
+                ? categoriaRepository.findById(catId)
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria no encontrada"))
                 : null;
 

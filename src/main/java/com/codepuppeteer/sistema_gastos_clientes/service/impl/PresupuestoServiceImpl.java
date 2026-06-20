@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -32,12 +33,13 @@ public class PresupuestoServiceImpl implements PresupuestoService {
     public Presupuesto crearPresupuestoConRelaciones(PresupuestoSave dto) {
         Presupuesto presupuesto = mapper.toEntity(dto);
 
-        Cliente cliente = clienteRepository.findById(dto.clienteId())
+        Cliente cliente = clienteRepository.findById(Objects.requireNonNull(dto.clienteId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
         presupuesto.setCliente(cliente);
 
-        if (dto.categoriaId() != null) {
-            Categoria categoria = categoriaRepository.findById(dto.categoriaId())
+        Long catId = dto.categoriaId();
+        if (catId != null) {
+            Categoria categoria = categoriaRepository.findById(catId)
                     .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada"));
             presupuesto.setCategoria(categoria);
         }
@@ -52,8 +54,9 @@ public class PresupuestoServiceImpl implements PresupuestoService {
 
         mapper.updateFromDto(dto, existente);
 
-        if (dto.categoriaId() != null) {
-            Categoria categoria = categoriaRepository.findById(dto.categoriaId())
+        Long catId = dto.categoriaId();
+        if (catId != null) {
+            Categoria categoria = categoriaRepository.findById(catId)
                     .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada"));
             existente.setCategoria(categoria);
         } else {

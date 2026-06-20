@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -27,7 +28,7 @@ public class ConfiguracionServiceImpl implements ConfiguracionService {
     public Configuracion crearConfiguracion(ConfiguracionSave dto) {
         Configuracion config = mapper.toEntity(dto);
 
-        Cliente cliente = clienteRepository.findById(dto.clienteId())
+        Cliente cliente = clienteRepository.findById(Objects.requireNonNull(dto.clienteId()))
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
         config.setCliente(cliente);
 

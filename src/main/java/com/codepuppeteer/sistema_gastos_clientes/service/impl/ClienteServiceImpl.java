@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public ClienteResponse createCliente(ClienteSave dto) {
-        Usuario usuario = usuarioRepository.findById(dto.usuarioId())
+        Usuario usuario = usuarioRepository.findById(Objects.requireNonNull(dto.usuarioId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + dto.usuarioId()));
         Cliente cliente = clienteMapper.toEntity(dto);
         cliente.setUsuario(usuario);

@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class IngresoServiceImpl implements IngresoService {
 
     @Override
     public IngresoResponse crearIngreso(IngresoSave dto) {
-        Cliente cliente = clienteRepository.findById(dto.clienteId())
+        Cliente cliente = clienteRepository.findById(Objects.requireNonNull(dto.clienteId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + dto.clienteId()));
 
         Ingreso ingreso = ingresoMapper.toEntity(dto);

@@ -1,6 +1,7 @@
 package com.codepuppeteer.sistema_gastos_clientes.mapper;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -50,6 +51,6 @@ public abstract class CategoriaMapper {
         if (categoria == null) {
             return null;
         }
-        return categoria.getId();
+        return Objects.requireNonNull(categoria.getId());
     }
 }

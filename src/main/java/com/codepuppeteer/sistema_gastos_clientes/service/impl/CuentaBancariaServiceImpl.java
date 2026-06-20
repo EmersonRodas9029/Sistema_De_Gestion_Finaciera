@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -32,7 +33,7 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
 
         CuentaBancaria cuenta = mapper.toEntity(dto);
 
-        Cliente cliente = clienteRepository.findById(dto.clienteId())
+        Cliente cliente = clienteRepository.findById(Objects.requireNonNull(dto.clienteId()))
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
         cuenta.setCliente(cliente);
 
@@ -50,8 +51,9 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
 
         mapper.updateFromDto(dto, cuenta);
 
-        if (dto.clienteId() != null) {
-            Cliente cliente = clienteRepository.findById(dto.clienteId())
+        Long clienteId = dto.clienteId();
+        if (clienteId != null) {
+            Cliente cliente = clienteRepository.findById(clienteId)
                     .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
             cuenta.setCliente(cliente);
         }

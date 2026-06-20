@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -25,10 +26,10 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     @Override
     public CategoriaResponse create(CategoriaSave dto) {
-        Cliente cliente = clienteRepository.findById(dto.clienteId())
+        Cliente cliente = clienteRepository.findById(Objects.requireNonNull(dto.clienteId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + dto.clienteId()));
 
-        if (categoriaRepository.existsByClienteIdAndNombre(cliente.getId(), dto.nombre())) {
+        if (categoriaRepository.existsByClienteIdAndNombre(Objects.requireNonNull(cliente.getId()), dto.nombre())) {
             throw new IllegalArgumentException("Ya existe una categoría con ese nombre para este cliente");
         }
 

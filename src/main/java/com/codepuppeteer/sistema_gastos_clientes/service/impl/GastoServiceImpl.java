@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -32,12 +33,13 @@ public class GastoServiceImpl implements GastoService {
     public Gasto crearGastoConRelaciones(GastoSave gastoSave) {
         Gasto gasto = gastoMapper.toEntity(gastoSave);
 
-        Cliente cliente = clienteRepository.findById(gastoSave.clienteId())
+        Cliente cliente = clienteRepository.findById(Objects.requireNonNull(gastoSave.clienteId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
         gasto.setCliente(cliente);
 
-        if (gastoSave.categoriaId() != null) {
-            Categoria categoria = categoriaRepository.findById(gastoSave.categoriaId())
+        Long catId = gastoSave.categoriaId();
+        if (catId != null) {
+            Categoria categoria = categoriaRepository.findById(catId)
                     .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada"));
             gasto.setCategoria(categoria);
         }
@@ -52,8 +54,9 @@ public class GastoServiceImpl implements GastoService {
 
         gastoMapper.updateFromDto(gastoUpdate, existente);
 
-        if (gastoUpdate.categoriaId() != null) {
-            Categoria categoria = categoriaRepository.findById(gastoUpdate.categoriaId())
+        Long catId = gastoUpdate.categoriaId();
+        if (catId != null) {
+            Categoria categoria = categoriaRepository.findById(catId)
                     .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada"));
             existente.setCategoria(categoria);
         } else {

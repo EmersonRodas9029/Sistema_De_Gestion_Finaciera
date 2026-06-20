@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -30,12 +31,13 @@ public class ReporteServiceImpl implements ReporteService {
     public Reporte crearReporte(ReporteSave dto) {
         Reporte reporte = mapper.toEntity(dto);
 
-        Cliente cliente = clienteRepository.findById(dto.clienteId())
+        Cliente cliente = clienteRepository.findById(Objects.requireNonNull(dto.clienteId()))
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
         reporte.setCliente(cliente);
 
-        if (dto.contadorId() != null) {
-            Usuario contador = usuarioRepository.findById(dto.contadorId())
+        Long contadorId = dto.contadorId();
+        if (contadorId != null) {
+            Usuario contador = usuarioRepository.findById(contadorId)
                     .orElseThrow(() -> new RuntimeException("Contador no encontrado"));
             reporte.setContador(contador);
         }
@@ -50,12 +52,13 @@ public class ReporteServiceImpl implements ReporteService {
 
         mapper.updateFromDto(dto, existente);
 
-        Cliente cliente = clienteRepository.findById(dto.clienteId())
+        Cliente cliente = clienteRepository.findById(Objects.requireNonNull(dto.clienteId()))
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
         existente.setCliente(cliente);
 
-        if (dto.contadorId() != null) {
-            Usuario contador = usuarioRepository.findById(dto.contadorId())
+        Long contadorId = dto.contadorId();
+        if (contadorId != null) {
+            Usuario contador = usuarioRepository.findById(contadorId)
                     .orElseThrow(() -> new RuntimeException("Contador no encontrado"));
             existente.setContador(contador);
         } else {

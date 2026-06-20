@@ -8,6 +8,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 import java.util.List;
+import java.util.Objects;
 
 @Mapper(componentModel = "spring", uses = {UsuarioMapper.class})
 public abstract class ClienteMapper {
@@ -47,6 +48,6 @@ public abstract class ClienteMapper {
         if (cliente == null) {
             return null;
         }
-        return cliente.getId();
+        return Objects.requireNonNull(cliente.getId());
     }
 }
