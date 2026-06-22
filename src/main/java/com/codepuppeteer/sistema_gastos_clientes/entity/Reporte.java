@@ -51,6 +51,11 @@ public class Reporte {
     @Builder.Default
     private LocalDateTime fechaGeneracion = LocalDateTime.now();
 
+    @PrePersist
+    public void prePersist() {
+        if (fechaGeneracion == null) fechaGeneracion = LocalDateTime.now();
+    }
+
     @PreUpdate
     public void preUpdate() {
         fechaGeneracion = LocalDateTime.now();

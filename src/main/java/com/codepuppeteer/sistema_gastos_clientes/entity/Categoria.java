@@ -60,6 +60,16 @@ public class Categoria {
     @Builder.Default
     private LocalDateTime fechaModificacion = LocalDateTime.now();
 
+    @PrePersist
+    public void prePersist() {
+        if (color == null) color = "#3498db";
+        if (icono == null) icono = "category";
+        if (presupuestoMensual == null) presupuestoMensual = BigDecimal.ZERO;
+        if (activa == null) activa = true;
+        if (fechaCreacion == null) fechaCreacion = LocalDateTime.now();
+        if (fechaModificacion == null) fechaModificacion = LocalDateTime.now();
+    }
+
     @PreUpdate
     public void preUpdate() {
         fechaModificacion = LocalDateTime.now();

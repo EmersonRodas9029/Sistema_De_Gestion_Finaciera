@@ -64,6 +64,15 @@ public class Gasto {
     @Builder.Default
     private LocalDateTime fechaModificacion = LocalDateTime.now();
 
+    @PrePersist
+    public void prePersist() {
+        if (metodoPago == null) metodoPago = MetodoPago.EFECTIVO;
+        if (esRecurrente == null) esRecurrente = false;
+        if (activo == null) activo = true;
+        if (fechaCreacion == null) fechaCreacion = LocalDateTime.now();
+        if (fechaModificacion == null) fechaModificacion = LocalDateTime.now();
+    }
+
     @PreUpdate
     public void preUpdate() {
         fechaModificacion = LocalDateTime.now();

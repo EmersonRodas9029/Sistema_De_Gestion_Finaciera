@@ -53,6 +53,13 @@ public class Presupuesto {
     @Builder.Default
     private LocalDateTime fechaModificacion = LocalDateTime.now();
 
+    @PrePersist
+    public void prePersist() {
+        if (activo == null) activo = true;
+        if (fechaCreacion == null) fechaCreacion = LocalDateTime.now();
+        if (fechaModificacion == null) fechaModificacion = LocalDateTime.now();
+    }
+
     @PreUpdate
     public void preUpdate() {
         fechaModificacion = LocalDateTime.now();

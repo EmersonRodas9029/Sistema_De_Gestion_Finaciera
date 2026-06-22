@@ -60,6 +60,14 @@ public class Cliente {
     @Builder.Default
     private LocalDateTime fechaModificacion = LocalDateTime.now();
 
+    @PrePersist
+    public void prePersist() {
+        if (tipoDocumento == null) tipoDocumento = TipoDocumento.DNI;
+        if (activo == null) activo = true;
+        if (fechaCreacion == null) fechaCreacion = LocalDateTime.now();
+        if (fechaModificacion == null) fechaModificacion = LocalDateTime.now();
+    }
+
     @PreUpdate
     public void preUpdate() {
         fechaModificacion = LocalDateTime.now();

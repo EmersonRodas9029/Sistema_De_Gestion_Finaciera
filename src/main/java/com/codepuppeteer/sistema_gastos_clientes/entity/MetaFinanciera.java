@@ -60,6 +60,16 @@ public class MetaFinanciera {
     @Builder.Default
     private LocalDateTime fechaModificacion = LocalDateTime.now();
 
+    @PrePersist
+    public void prePersist() {
+        if (montoActual == null) montoActual = BigDecimal.ZERO;
+        if (prioridad == null) prioridad = Prioridad.MEDIA;
+        if (activa == null) activa = true;
+        if (completada == null) completada = false;
+        if (fechaCreacion == null) fechaCreacion = LocalDateTime.now();
+        if (fechaModificacion == null) fechaModificacion = LocalDateTime.now();
+    }
+
     @PreUpdate
     public void preUpdate() {
         fechaModificacion = LocalDateTime.now();
