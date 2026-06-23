@@ -31,8 +31,9 @@ public class ClienteController {
     private final ClienteService clienteService;
 
     @GetMapping
-    public ResponseEntity<List<ClienteList>> getAllClientes() {
-        return ResponseEntity.ok(clienteService.getAllClientes());
+    public ResponseEntity<List<ClienteList>> getAllClientes(
+            @org.springframework.web.bind.annotation.RequestParam(required = false) Boolean activo) {
+        return ResponseEntity.ok(clienteService.getAllClientes(activo));
     }
 
     @GetMapping("/{id}")

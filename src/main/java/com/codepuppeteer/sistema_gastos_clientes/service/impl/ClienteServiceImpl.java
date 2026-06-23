@@ -44,7 +44,8 @@ public class ClienteServiceImpl implements ClienteService {
     public void deleteCliente(long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + id));
-        clienteRepository.delete(cliente);
+        cliente.setActivo(false);
+        clienteRepository.save(cliente);
     }
 
     @Override
@@ -55,7 +56,8 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    public List<ClienteList> getAllClientes() {
-        return clienteMapper.toList(clienteRepository.findAll());
+    public List<ClienteList> getAllClientes(Boolean activo) {
+        var clientes = activo != null ? clienteRepository.findByActivo(activo) : clienteRepository.findAll();
+        return clienteMapper.toList(clientes);
     }
 }

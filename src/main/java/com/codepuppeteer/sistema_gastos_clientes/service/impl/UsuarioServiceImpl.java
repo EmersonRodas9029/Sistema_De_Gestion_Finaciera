@@ -57,7 +57,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     public void eliminarUsuario(long id) {
         Usuario existente = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
-        usuarioRepository.delete(existente);
+        existente.setActivo(false);
+        usuarioRepository.save(existente);
+        clienteRepository.findByUsuarioId(id).ifPresent(c -> {
+            c.setActivo(false);
+            clienteRepository.save(c);
+        });
     }
 
     @Override

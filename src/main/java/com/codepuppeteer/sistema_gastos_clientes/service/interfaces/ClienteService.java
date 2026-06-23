@@ -14,5 +14,5 @@ public interface ClienteService {
 
     ClienteResponse getClienteById(long id);
 
-    List<ClienteList> getAllClientes();
+    List<ClienteList> getAllClientes(Boolean activo);
 }
