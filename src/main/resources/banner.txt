@@ -1,0 +1,5 @@
+
+ ┌──────────────────────────────────────────┐
+ │   Sistema de Gestión Financiera          │
+ │   Spring Boot ${spring-boot.version}                  │
+ └──────────────────────────────────────────┘
