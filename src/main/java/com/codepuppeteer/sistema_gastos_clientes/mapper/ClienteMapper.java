@@ -21,7 +21,7 @@ public abstract class ClienteMapper {
     public abstract List<ClienteList> toList(List<Cliente> clientes);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "usuario", source = "usuarioId", qualifiedByName = "toUsuario")
+    @Mapping(target = "usuario", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaModificacion", ignore = true)
     @Mapping(target = "activo", ignore = true)

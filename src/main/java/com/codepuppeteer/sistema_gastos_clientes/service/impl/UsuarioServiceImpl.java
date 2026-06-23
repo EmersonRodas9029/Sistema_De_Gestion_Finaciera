@@ -3,9 +3,12 @@ package com.codepuppeteer.sistema_gastos_clientes.service.impl;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioResponse;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioSave;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioUpdate;
+import com.codepuppeteer.sistema_gastos_clientes.entity.Cliente;
 import com.codepuppeteer.sistema_gastos_clientes.entity.Usuario;
+import com.codepuppeteer.sistema_gastos_clientes.enums.Rol;
 import com.codepuppeteer.sistema_gastos_clientes.exception.ResourceNotFoundException;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.UsuarioMapper;
+import com.codepuppeteer.sistema_gastos_clientes.repository.ClienteRepository;
 import com.codepuppeteer.sistema_gastos_clientes.repository.UsuarioRepository;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +23,26 @@ import java.util.List;
 public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final ClienteRepository clienteRepository;
     private final UsuarioMapper usuarioMapper;
 
     @Override
     public UsuarioResponse crearUsuario(UsuarioSave usuarioDto) {
         Usuario usuario = usuarioMapper.toEntity(usuarioDto);
-        return usuarioMapper.toResponse(usuarioRepository.save(usuario));
+        Usuario saved = usuarioRepository.save(usuario);
+        if (saved.getRol() == Rol.CLIENTE) {
+            clienteRepository.save(Cliente.builder()
+                    .usuario(saved)
+                    .nombreCompleto(usuarioDto.nombreCompleto() != null ? usuarioDto.nombreCompleto() : saved.getUsername())
+                    .email(saved.getEmail())
+                    .telefono(usuarioDto.telefono())
+                    .fechaNacimiento(usuarioDto.fechaNacimiento())
+                    .documentoIdentidad(usuarioDto.documentoIdentidad())
+                    .tipoDocumento(usuarioDto.tipoDocumento())
+                    .direccion(usuarioDto.direccion())
+                    .build());
+        }
+        return usuarioMapper.toResponse(saved);
     }
 
     @Override

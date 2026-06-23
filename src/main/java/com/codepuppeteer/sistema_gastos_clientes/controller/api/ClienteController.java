@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import com.codepuppeteer.sistema_gastos_clientes.dto.cliente.ClienteList;
 import com.codepuppeteer.sistema_gastos_clientes.dto.cliente.ClienteResponse;
 import com.codepuppeteer.sistema_gastos_clientes.dto.cliente.ClienteSave;
 import com.codepuppeteer.sistema_gastos_clientes.dto.cliente.ClienteUpdate;
+import com.codepuppeteer.sistema_gastos_clientes.security.UsuarioDetails;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.ClienteService;
 
 import lombok.RequiredArgsConstructor;
@@ -39,8 +41,9 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<ClienteResponse> createCliente(@RequestBody ClienteSave dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.createCliente(dto));
+    public ResponseEntity<ClienteResponse> createCliente(@RequestBody ClienteSave dto, Authentication auth) {
+        Long usuarioId = ((UsuarioDetails) auth.getPrincipal()).getUsuarioId();
+        return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.createCliente(dto, usuarioId));
     }
 
     @PutMapping("/{id}")

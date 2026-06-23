@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ClienteService {
 
-    ClienteResponse createCliente(ClienteSave dto);
+    ClienteResponse createCliente(ClienteSave dto, Long usuarioId);
 
     ClienteResponse updateCliente(long id, ClienteUpdate dto);
 
