@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class RateLimitFilter extends OncePerRequestFilter {
 
     private final ConcurrentHashMap<String, RequestInfo> requests = new ConcurrentHashMap<>();
-    private final int MAX_REQUESTS = 10;
+    private final int MAX_REQUESTS = 200;
     private final long TIME_WINDOW = TimeUnit.MINUTES.toMillis(1);
 
     @Override
@@ -36,7 +36,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
         });
 
         if (requests.get(ip).count > MAX_REQUESTS) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setStatus(429);
             response.getWriter().write("Demasiadas solicitudes, espera un momento.");
             return;
         }
