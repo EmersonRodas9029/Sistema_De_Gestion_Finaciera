@@ -2,6 +2,7 @@ package com.codepuppeteer.sistema_gastos_clientes.controller.api;
 
 import com.codepuppeteer.sistema_gastos_clientes.dto.meta_financiera.*;
 import com.codepuppeteer.sistema_gastos_clientes.entity.MetaFinanciera;
+import com.codepuppeteer.sistema_gastos_clientes.exception.ResourceNotFoundException;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.MetaFinancieraMapper;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.MetaFinancieraService;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +29,14 @@ public class MetaFinancieraController {
     @GetMapping("/{id}")
     public ResponseEntity<MetaFinancieraResponse> getById(@PathVariable long id) {
         MetaFinanciera meta = metaFinancieraService.obtenerMetaPorId(id)
-                .orElseThrow(() -> new RuntimeException("Meta financiera no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Meta financiera no encontrada"));
         return ResponseEntity.ok(metaFinancieraMapper.toResponse(meta));
+    }
+
+    @GetMapping("/cliente/{clienteId}")
+    public ResponseEntity<List<MetaFinancieraList>> getByCliente(@PathVariable long clienteId) {
+        List<MetaFinanciera> metas = metaFinancieraService.obtenerMetasPorCliente(clienteId);
+        return ResponseEntity.ok(metaFinancieraMapper.toList(metas));
     }
 
     @PostMapping
@@ -41,7 +48,7 @@ public class MetaFinancieraController {
     @PutMapping("/{id}")
     public ResponseEntity<MetaFinancieraResponse> update(@PathVariable long id, @RequestBody MetaFinancieraUpdate dto) {
         MetaFinanciera existente = metaFinancieraService.obtenerMetaPorId(id)
-                .orElseThrow(() -> new RuntimeException("Meta financiera no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Meta financiera no encontrada"));
 
         metaFinancieraMapper.updateFromDto(dto, existente);
         MetaFinanciera actualizada = metaFinancieraService.actualizarMeta(id, existente);
