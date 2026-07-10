@@ -2,10 +2,13 @@ package com.codepuppeteer.sistema_gastos_clientes.controller.api;
 
 import com.codepuppeteer.sistema_gastos_clientes.dto.reporte.*;
 import com.codepuppeteer.sistema_gastos_clientes.entity.Reporte;
+import com.codepuppeteer.sistema_gastos_clientes.exception.ResourceNotFoundException;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.ReporteMapper;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.ReporteService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +31,23 @@ public class ReporteController {
     @GetMapping("/{id}")
     public ResponseEntity<ReporteResponse> getReporteById(@PathVariable long id) {
         Reporte reporte = service.obtenerReportePorId(id)
-                .orElseThrow(() -> new RuntimeException("Reporte no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Reporte no encontrado"));
         return ResponseEntity.ok(mapper.toResponse(reporte));
+    }
+
+    @GetMapping("/cliente/{clienteId}")
+    public ResponseEntity<List<ReporteList>> getReportesByCliente(@PathVariable long clienteId) {
+        List<Reporte> reportes = service.obtenerReportesPorCliente(clienteId);
+        return ResponseEntity.ok(mapper.toList(reportes));
+    }
+
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<byte[]> descargarPdf(@PathVariable long id) {
+        byte[] pdf = service.generarPdf(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"reporte-" + id + ".pdf\"")
+                .body(pdf);
     }
 
     @PostMapping

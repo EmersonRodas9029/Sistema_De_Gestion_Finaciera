@@ -17,4 +17,8 @@ public interface ReporteService {
     Optional<Reporte> obtenerReportePorId(long id);
 
     List<Reporte> obtenerTodosLosReportes();
+
+    List<Reporte> obtenerReportesPorCliente(long clienteId);
+
+    byte[] generarPdf(long id);
 }

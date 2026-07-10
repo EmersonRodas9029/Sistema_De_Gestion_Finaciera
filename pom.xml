@@ -160,6 +160,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Generación de PDF -->
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>1.3.30</version>
+        </dependency>
+
         <!-- WebJars para frontend (opcional) -->
         <dependency>
             <groupId>org.webjars</groupId>
