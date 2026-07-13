@@ -3,6 +3,7 @@ package com.codepuppeteer.sistema_gastos_clientes.service.impl;
 import com.codepuppeteer.sistema_gastos_clientes.dto.notificacion.*;
 import com.codepuppeteer.sistema_gastos_clientes.entity.Cliente;
 import com.codepuppeteer.sistema_gastos_clientes.entity.Notificacion;
+import com.codepuppeteer.sistema_gastos_clientes.exception.ResourceNotFoundException;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.NotificacionMapper;
 import com.codepuppeteer.sistema_gastos_clientes.repository.ClienteRepository;
 import com.codepuppeteer.sistema_gastos_clientes.repository.NotificacionRepository;
@@ -29,7 +30,7 @@ public class NotificacionServiceImpl implements NotificacionService {
         Notificacion notificacion = mapper.toEntity(dto);
 
         Cliente cliente = clienteRepository.findById(Objects.requireNonNull(dto.clienteId()))
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
         notificacion.setCliente(cliente);
 
         if (notificacion.getActiva() == null) notificacion.setActiva(true);
@@ -41,7 +42,7 @@ public class NotificacionServiceImpl implements NotificacionService {
     @Override
     public Notificacion actualizarNotificacion(long id, NotificacionUpdate dto) {
         Notificacion notificacion = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Notificación no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Notificación no encontrada"));
 
         mapper.updateFromDto(dto, notificacion);
         return repository.save(notificacion);
@@ -50,7 +51,7 @@ public class NotificacionServiceImpl implements NotificacionService {
     @Override
     public void eliminarNotificacion(long id) {
         Notificacion notificacion = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Notificación no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Notificación no encontrada"));
         repository.delete(notificacion);
     }
 

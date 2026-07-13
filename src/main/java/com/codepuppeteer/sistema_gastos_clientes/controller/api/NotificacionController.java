@@ -2,6 +2,7 @@ package com.codepuppeteer.sistema_gastos_clientes.controller.api;
 
 import com.codepuppeteer.sistema_gastos_clientes.entity.Notificacion;
 import com.codepuppeteer.sistema_gastos_clientes.dto.notificacion.*;
+import com.codepuppeteer.sistema_gastos_clientes.exception.ResourceNotFoundException;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.NotificacionMapper;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.NotificacionService;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class NotificacionController {
     @GetMapping("/{id}")
     public ResponseEntity<NotificacionResponse> getById(@PathVariable long id) {
         Notificacion notificacion = service.obtenerNotificacionPorId(id)
-                .orElseThrow(() -> new RuntimeException("Notificación no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Notificación no encontrada"));
         return ResponseEntity.ok(mapper.toResponse(notificacion));
     }
 
