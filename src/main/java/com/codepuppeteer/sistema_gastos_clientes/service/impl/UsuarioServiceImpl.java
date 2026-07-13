@@ -12,6 +12,7 @@ import com.codepuppeteer.sistema_gastos_clientes.repository.ClienteRepository;
 import com.codepuppeteer.sistema_gastos_clientes.repository.UsuarioRepository;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.UsuarioService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +26,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final ClienteRepository clienteRepository;
     private final UsuarioMapper usuarioMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UsuarioResponse crearUsuario(UsuarioSave usuarioDto) {
         Usuario usuario = usuarioMapper.toEntity(usuarioDto);
+        usuario.setPassword(passwordEncoder.encode(usuarioDto.password()));
         Usuario saved = usuarioRepository.save(usuario);
         if (saved.getRol() == Rol.CLIENTE) {
             clienteRepository.save(Cliente.builder()
@@ -50,6 +53,9 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario existente = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
         usuarioMapper.updateFromDto(usuarioDto, existente);
+        if (usuarioDto.password() != null && !usuarioDto.password().isBlank()) {
+            existente.setPassword(passwordEncoder.encode(usuarioDto.password()));
+        }
         return usuarioMapper.toResponse(usuarioRepository.save(existente));
     }
 

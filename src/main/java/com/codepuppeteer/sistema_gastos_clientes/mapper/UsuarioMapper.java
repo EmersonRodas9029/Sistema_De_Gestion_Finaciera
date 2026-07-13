@@ -22,7 +22,9 @@ public abstract class UsuarioMapper {
     public abstract List<UsuarioList> toList(List<Usuario> usuarios);
 
     // Mapeo de DTO de creación a entity
+    // password se ignora aquí: UsuarioServiceImpl lo encodea con PasswordEncoder antes de guardar
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "password", ignore = true)
     @Mapping(target = "ultimoAcceso", ignore = true)
     @Mapping(target = "intentosFallidos", ignore = true)
     @Mapping(target = "bloqueadoHasta", ignore = true)
@@ -33,7 +35,9 @@ public abstract class UsuarioMapper {
     public abstract Usuario toEntity(UsuarioSave dto);
 
     // Mapeo de DTO de actualización a entity
+    // password se ignora aquí: UsuarioServiceImpl lo encodea con PasswordEncoder solo si viene informado
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "password", ignore = true)
     @Mapping(target = "ultimoAcceso", ignore = true)
     @Mapping(target = "intentosFallidos", ignore = true)
     @Mapping(target = "bloqueadoHasta", ignore = true)

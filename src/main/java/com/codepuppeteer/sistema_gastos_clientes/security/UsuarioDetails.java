@@ -38,7 +38,8 @@ public class UsuarioDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !usuario.getBloqueadoHasta().isAfter(java.time.LocalDateTime.now());
+        return usuario.getBloqueadoHasta() == null
+                || !usuario.getBloqueadoHasta().isAfter(java.time.LocalDateTime.now());
     }
 
     @Override
