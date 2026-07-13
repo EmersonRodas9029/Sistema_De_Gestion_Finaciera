@@ -1,5 +1,6 @@
 package com.codepuppeteer.sistema_gastos_clientes.service.interfaces;
 
+import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.CambiarPasswordRequest;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioResponse;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioSave;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioUpdate;
@@ -11,6 +12,8 @@ public interface UsuarioService {
     UsuarioResponse crearUsuario(UsuarioSave usuario);
 
     UsuarioResponse actualizarUsuario(long id, UsuarioUpdate usuario);
+
+    void cambiarPassword(long id, CambiarPasswordRequest request);
 
     void eliminarUsuario(long id);
 

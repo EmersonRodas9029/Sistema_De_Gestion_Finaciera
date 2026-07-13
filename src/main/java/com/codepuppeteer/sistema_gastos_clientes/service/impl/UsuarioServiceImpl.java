@@ -1,5 +1,6 @@
 package com.codepuppeteer.sistema_gastos_clientes.service.impl;
 
+import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.CambiarPasswordRequest;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioResponse;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioSave;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioUpdate;
@@ -7,6 +8,7 @@ import com.codepuppeteer.sistema_gastos_clientes.entity.Cliente;
 import com.codepuppeteer.sistema_gastos_clientes.entity.Usuario;
 import com.codepuppeteer.sistema_gastos_clientes.enums.Rol;
 import com.codepuppeteer.sistema_gastos_clientes.exception.ResourceNotFoundException;
+import com.codepuppeteer.sistema_gastos_clientes.exception.UnauthorizedException;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.UsuarioMapper;
 import com.codepuppeteer.sistema_gastos_clientes.repository.ClienteRepository;
 import com.codepuppeteer.sistema_gastos_clientes.repository.UsuarioRepository;
@@ -57,6 +59,19 @@ public class UsuarioServiceImpl implements UsuarioService {
             existente.setPassword(passwordEncoder.encode(usuarioDto.password()));
         }
         return usuarioMapper.toResponse(usuarioRepository.save(existente));
+    }
+
+    @Override
+    public void cambiarPassword(long id, CambiarPasswordRequest request) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
+
+        if (!passwordEncoder.matches(request.passwordActual(), usuario.getPassword())) {
+            throw new UnauthorizedException("La contraseña actual no coincide");
+        }
+
+        usuario.setPassword(passwordEncoder.encode(request.passwordNueva()));
+        usuarioRepository.save(usuario);
     }
 
     @Override

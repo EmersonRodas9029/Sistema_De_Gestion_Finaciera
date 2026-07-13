@@ -2,6 +2,7 @@ package com.codepuppeteer.sistema_gastos_clientes.controller.api;
 
 import com.codepuppeteer.sistema_gastos_clientes.dto.configuracion.*;
 import com.codepuppeteer.sistema_gastos_clientes.entity.Configuracion;
+import com.codepuppeteer.sistema_gastos_clientes.exception.ResourceNotFoundException;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.ConfiguracionMapper;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.ConfiguracionService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class ConfiguracionController {
     @GetMapping("/{id}")
     public ResponseEntity<ConfiguracionResponse> getById(@PathVariable long id) {
         Configuracion config = service.obtenerPorId(id)
-                .orElseThrow(() -> new RuntimeException("Configuración no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Configuración no encontrada con id: " + id));
         return ResponseEntity.ok(mapper.toResponse(config));
     }
 

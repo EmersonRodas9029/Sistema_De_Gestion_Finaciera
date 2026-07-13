@@ -1,9 +1,11 @@
 package com.codepuppeteer.sistema_gastos_clientes.controller.api;
 
+import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.CambiarPasswordRequest;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioResponse;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioSave;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioUpdate;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.UsuarioService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +41,14 @@ public class UsuarioController {
             @PathVariable long id,
             @RequestBody UsuarioUpdate usuarioUpdate) {
         return ResponseEntity.ok(usuarioService.actualizarUsuario(id, usuarioUpdate));
+    }
+
+    @PutMapping("/{id}/password")
+    public ResponseEntity<Void> cambiarPassword(
+            @PathVariable long id,
+            @Valid @RequestBody CambiarPasswordRequest request) {
+        usuarioService.cambiarPassword(id, request);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")

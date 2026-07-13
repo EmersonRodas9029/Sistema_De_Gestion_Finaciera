@@ -3,6 +3,8 @@ package com.codepuppeteer.sistema_gastos_clientes.service.impl;
 import com.codepuppeteer.sistema_gastos_clientes.dto.configuracion.*;
 import com.codepuppeteer.sistema_gastos_clientes.entity.Cliente;
 import com.codepuppeteer.sistema_gastos_clientes.entity.Configuracion;
+import com.codepuppeteer.sistema_gastos_clientes.exception.DuplicateResourceException;
+import com.codepuppeteer.sistema_gastos_clientes.exception.ResourceNotFoundException;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.ConfiguracionMapper;
 import com.codepuppeteer.sistema_gastos_clientes.repository.ClienteRepository;
 import com.codepuppeteer.sistema_gastos_clientes.repository.ConfiguracionRepository;
@@ -29,7 +31,13 @@ public class ConfiguracionServiceImpl implements ConfiguracionService {
         Configuracion config = mapper.toEntity(dto);
 
         Cliente cliente = clienteRepository.findById(Objects.requireNonNull(dto.clienteId()))
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + dto.clienteId()));
+
+        if (repository.existsByClienteIdAndClave(dto.clienteId(), dto.clave())) {
+            throw new DuplicateResourceException(
+                    "Ya existe una configuración con clave '" + dto.clave() + "' para este cliente");
+        }
+
         config.setCliente(cliente);
 
         return repository.save(config);
@@ -38,7 +46,13 @@ public class ConfiguracionServiceImpl implements ConfiguracionService {
     @Override
     public Configuracion actualizarConfiguracion(long id, ConfiguracionUpdate dto) {
         Configuracion config = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Configuración no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Configuración no encontrada con id: " + id));
+
+        if (dto.clave() != null && !dto.clave().equals(config.getClave())
+                && repository.existsByClienteIdAndClave(config.getCliente().getId(), dto.clave())) {
+            throw new DuplicateResourceException(
+                    "Ya existe una configuración con clave '" + dto.clave() + "' para este cliente");
+        }
 
         mapper.updateFromDto(dto, config);
 
@@ -48,7 +62,7 @@ public class ConfiguracionServiceImpl implements ConfiguracionService {
     @Override
     public void eliminarConfiguracion(long id) {
         Configuracion config = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Configuración no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Configuración no encontrada con id: " + id));
         repository.delete(config);
     }
 

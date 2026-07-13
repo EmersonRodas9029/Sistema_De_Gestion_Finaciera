@@ -1,5 +1,6 @@
 package com.codepuppeteer.sistema_gastos_clientes.security;
 
+import com.codepuppeteer.sistema_gastos_clientes.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class SecurityUtils {
 
     private final UsuarioDetailsService usuarioDetailsService;
+    private final JwtUtil jwtUtil;
 
     public String extractToken(HttpServletRequest request) {
         String bearer = request.getHeader("Authorization");
@@ -22,11 +24,11 @@ public class SecurityUtils {
     }
 
     public boolean validateToken(String token) {
-        return token != null && !token.isEmpty();
+        return jwtUtil.validateToken(token);
     }
 
     public String getUsernameFromToken(String token) {
-        return token;
+        return jwtUtil.extractUsername(token);
     }
 
     public UsuarioDetails getUserDetails(String username) {

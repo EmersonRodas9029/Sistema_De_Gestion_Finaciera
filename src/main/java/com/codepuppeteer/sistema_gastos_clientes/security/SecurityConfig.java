@@ -3,6 +3,7 @@ package com.codepuppeteer.sistema_gastos_clientes.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -33,6 +34,7 @@ public class SecurityConfig {
                         // Endpoints públicos
                         .requestMatchers("/api/auth/**").permitAll()
                         // Endpoints de la API
+                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/*/password").authenticated()
                         .requestMatchers("/api/usuarios/**").permitAll()
                         .requestMatchers("/api/clientes/**").permitAll()
                         .requestMatchers("/api/categorias/**").permitAll()
