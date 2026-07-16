@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface MetaFinancieraRepository extends JpaRepository<MetaFinanciera, Long> {
     List<MetaFinanciera> findByClienteId(long clienteId);
+    boolean existsByClienteId(long clienteId);
 }

@@ -17,6 +17,10 @@ public interface UsuarioService {
 
     void eliminarUsuario(long id);
 
+    void activarUsuario(long id);
+
+    void eliminarUsuarioPermanente(long id);
+
     UsuarioResponse obtenerUsuarioPorId(long id);
 
     List<UsuarioResponse> obtenerTodosLosUsuarios();

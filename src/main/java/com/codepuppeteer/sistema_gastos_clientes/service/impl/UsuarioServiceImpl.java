@@ -7,10 +7,21 @@ import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioUpdate;
 import com.codepuppeteer.sistema_gastos_clientes.entity.Cliente;
 import com.codepuppeteer.sistema_gastos_clientes.entity.Usuario;
 import com.codepuppeteer.sistema_gastos_clientes.enums.Rol;
+import com.codepuppeteer.sistema_gastos_clientes.exception.BusinessException;
 import com.codepuppeteer.sistema_gastos_clientes.exception.ResourceNotFoundException;
 import com.codepuppeteer.sistema_gastos_clientes.exception.UnauthorizedException;
+import com.codepuppeteer.sistema_gastos_clientes.mapper.ClienteMapper;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.UsuarioMapper;
+import com.codepuppeteer.sistema_gastos_clientes.repository.CategoriaRepository;
 import com.codepuppeteer.sistema_gastos_clientes.repository.ClienteRepository;
+import com.codepuppeteer.sistema_gastos_clientes.repository.CuentaBancariaRepository;
+import com.codepuppeteer.sistema_gastos_clientes.repository.GastoRecurrenteRepository;
+import com.codepuppeteer.sistema_gastos_clientes.repository.GastoRepository;
+import com.codepuppeteer.sistema_gastos_clientes.repository.IngresoRepository;
+import com.codepuppeteer.sistema_gastos_clientes.repository.MetaFinancieraRepository;
+import com.codepuppeteer.sistema_gastos_clientes.repository.NotificacionRepository;
+import com.codepuppeteer.sistema_gastos_clientes.repository.PresupuestoRepository;
+import com.codepuppeteer.sistema_gastos_clientes.repository.ReporteRepository;
 import com.codepuppeteer.sistema_gastos_clientes.repository.UsuarioRepository;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +39,28 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final ClienteRepository clienteRepository;
     private final UsuarioMapper usuarioMapper;
+    private final ClienteMapper clienteMapper;
     private final PasswordEncoder passwordEncoder;
+    private final GastoRepository gastoRepository;
+    private final IngresoRepository ingresoRepository;
+    private final PresupuestoRepository presupuestoRepository;
+    private final MetaFinancieraRepository metaFinancieraRepository;
+    private final ReporteRepository reporteRepository;
+    private final CuentaBancariaRepository cuentaBancariaRepository;
+    private final NotificacionRepository notificacionRepository;
+    private final GastoRecurrenteRepository gastoRecurrenteRepository;
+    private final CategoriaRepository categoriaRepository;
+
+    // Usuario no tiene referencia directa a Cliente (la FK vive del lado de Cliente),
+    // así que el cliente asociado se resuelve aparte y se agrega al DTO de respuesta.
+    private UsuarioResponse toResponseConCliente(Usuario usuario) {
+        UsuarioResponse base = usuarioMapper.toResponse(usuario);
+        var cliente = clienteRepository.findByUsuarioId(usuario.getId())
+                .map(clienteMapper::toResponse)
+                .orElse(null);
+        return new UsuarioResponse(base.id(), base.username(), base.email(), base.rol(), base.activo(),
+                base.ultimoAcceso(), base.fechaCreacion(), base.fechaModificacion(), cliente);
+    }
 
     @Override
     public UsuarioResponse crearUsuario(UsuarioSave usuarioDto) {
@@ -47,7 +79,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                     .direccion(usuarioDto.direccion())
                     .build());
         }
-        return usuarioMapper.toResponse(saved);
+        return toResponseConCliente(saved);
     }
 
     @Override
@@ -58,7 +90,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (usuarioDto.password() != null && !usuarioDto.password().isBlank()) {
             existente.setPassword(passwordEncoder.encode(usuarioDto.password()));
         }
-        return usuarioMapper.toResponse(usuarioRepository.save(existente));
+        return toResponseConCliente(usuarioRepository.save(existente));
     }
 
     @Override
@@ -87,17 +119,59 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    public void activarUsuario(long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
+        usuario.setActivo(true);
+        usuario.setIntentosFallidos(0);
+        usuario.setBloqueadoHasta(null);
+        usuarioRepository.save(usuario);
+        clienteRepository.findByUsuarioId(id).ifPresent(c -> {
+            c.setActivo(true);
+            clienteRepository.save(c);
+        });
+    }
+
+    @Override
+    public void eliminarUsuarioPermanente(long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
+
+        clienteRepository.findByUsuarioId(id).ifPresent(cliente -> {
+            long clienteId = cliente.getId();
+            boolean tieneRegistrosAsociados = gastoRepository.existsByClienteId(clienteId)
+                    || ingresoRepository.existsByClienteId(clienteId)
+                    || presupuestoRepository.existsByClienteId(clienteId)
+                    || metaFinancieraRepository.existsByClienteId(clienteId)
+                    || reporteRepository.existsByClienteId(clienteId)
+                    || cuentaBancariaRepository.existsByClienteId(clienteId)
+                    || notificacionRepository.existsByClienteId(clienteId)
+                    || gastoRecurrenteRepository.existsByClienteId(clienteId)
+                    || categoriaRepository.existsByClienteId(clienteId);
+            if (tieneRegistrosAsociados) {
+                throw new BusinessException(
+                        "No se puede eliminar definitivamente: el cliente tiene registros asociados " +
+                        "(gastos, ingresos, presupuestos, metas, etc.). Debe permanecer desactivado para conservar su historial."
+                );
+            }
+            clienteRepository.delete(cliente);
+        });
+
+        usuarioRepository.delete(usuario);
+    }
+
+    @Override
     public UsuarioResponse obtenerUsuarioPorId(long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
-        return usuarioMapper.toResponse(usuario);
+        return toResponseConCliente(usuario);
     }
 
     @Override
     public List<UsuarioResponse> obtenerTodosLosUsuarios() {
         return usuarioRepository.findAll()
                 .stream()
-                .map(usuarioMapper::toResponse)
+                .map(this::toResponseConCliente)
                 .toList();
     }
 

@@ -44,6 +44,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
 
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<Map<String,Object>> handleBusiness(BusinessException ex) {
+        Map<String,Object> body = new HashMap<>();
+        body.put("error", "Conflict");
+        body.put("message", ex.getMessage());
+        body.put("status", 409);
+        body.put("timestamp", LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+    }
+
     @ExceptionHandler(InvalidRequestException.class)
     public ResponseEntity<Map<String,Object>> handleInvalidRequest(InvalidRequestException ex) {
         Map<String,Object> body = new HashMap<>();

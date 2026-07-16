@@ -39,4 +39,6 @@ Spring Boot 3 REST API (Java 17). No frontend — Thymeleaf dependency exists bu
 - `util/` — `JwtUtil`, `DateUtils`, `FileUtils`, `EncryptionUtils`, `ValidationUtils`
 - `enums/` — `Rol`, `Frecuencia`, `MetodoPago`, `MetodoRecepcion`, `Prioridad`
 
-**DB connection:** MySQL on `localhost:3307` (Docker maps 3307→3306). Credentials in `application.properties`. Docker Compose also sets up the schema automatically.
+**DB connection:** MySQL on `localhost:3307` (Docker maps 3307→3306) by default. Overridable via env vars `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD` (falls back to local Docker Compose values when unset). `JWT_SECRET` and `PORT` are also env-overridable — see deployment notes below. Docker Compose also sets up the schema automatically.
+
+**Deployment:** No env vars set → runs against local Docker MySQL with the same defaults as before. In production (e.g. Railway), set `DB_HOST`/`DB_PORT`/`DB_NAME`/`DB_USERNAME`/`DB_PASSWORD` from the managed MySQL instance, a freshly generated `JWT_SECRET` (never reuse the local default — it's public in git history), and let the platform set `PORT`.

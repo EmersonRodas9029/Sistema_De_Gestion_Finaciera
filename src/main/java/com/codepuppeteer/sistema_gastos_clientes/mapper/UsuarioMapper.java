@@ -2,10 +2,12 @@ package com.codepuppeteer.sistema_gastos_clientes.mapper;
 
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.*;
 import com.codepuppeteer.sistema_gastos_clientes.entity.Usuario;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 import java.util.Objects;
@@ -14,6 +16,8 @@ import java.util.Objects;
 public abstract class UsuarioMapper {
 
     // Mapeo de entity a DTO de respuesta
+    // cliente se resuelve aparte en UsuarioServiceImpl (Usuario no tiene referencia directa a Cliente)
+    @Mapping(target = "cliente", ignore = true)
     public abstract UsuarioResponse toResponse(Usuario usuario);
 
     // Mapeo de entity a DTO de lista
@@ -36,6 +40,8 @@ public abstract class UsuarioMapper {
 
     // Mapeo de DTO de actualización a entity
     // password se ignora aquí: UsuarioServiceImpl lo encodea con PasswordEncoder solo si viene informado
+    // IGNORE: un PUT parcial que omite un campo (ej. "activo") no debe sobrescribirlo con null
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "ultimoAcceso", ignore = true)

@@ -9,4 +9,6 @@ public interface GastoRepository extends JpaRepository<Gasto, Long> {
     List<Gasto> findByClienteId(long clienteId);
 
     List<Gasto> findByCategoriaId(long categoriaId);
+
+    boolean existsByClienteId(long clienteId);
 }

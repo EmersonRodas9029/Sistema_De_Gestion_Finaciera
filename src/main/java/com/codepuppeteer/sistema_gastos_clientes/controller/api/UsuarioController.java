@@ -56,4 +56,16 @@ public class UsuarioController {
         usuarioService.eliminarUsuario(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/activar")
+    public ResponseEntity<Void> activarUsuario(@PathVariable long id) {
+        usuarioService.activarUsuario(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}/permanente")
+    public ResponseEntity<Void> deleteUsuarioPermanente(@PathVariable long id) {
+        usuarioService.eliminarUsuarioPermanente(id);
+        return ResponseEntity.noContent().build();
+    }
 }

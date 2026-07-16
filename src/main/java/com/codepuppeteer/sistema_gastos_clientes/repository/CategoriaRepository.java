@@ -9,4 +9,6 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
     List<Categoria> findByClienteId(long clienteId);
 
     boolean existsByClienteIdAndNombre(long clienteId, String nombre);
+
+    boolean existsByClienteId(long clienteId);
 }

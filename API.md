@@ -21,6 +21,13 @@ Tipos de datos (referencia rapida):
   - Body: `username` (String, requerido), `password` (String), `email` (String), `rol` (Rol), `activo` (Boolean)
 - DELETE `/api/usuarios/{id}`
   - Path: `id` (Long)
+  - Soft-delete: pone `activo=false` en el usuario y en el cliente asociado (si existe). No borra filas.
+- PUT `/api/usuarios/{id}/activar`
+  - Path: `id` (Long)
+  - Reactiva el usuario y el cliente asociado (si existe): `activo=true`, desbloquea intentos fallidos.
+- DELETE `/api/usuarios/{id}/permanente`
+  - Path: `id` (Long)
+  - Borra la fila del usuario (y su cliente asociado) de forma irreversible. Responde 409 si el cliente tiene registros asociados (gastos, ingresos, presupuestos, metas, reportes, cuentas bancarias, notificaciones, gastos recurrentes o categorías).
 
 ## Clientes (`/api/clientes`)
 - GET `/api/clientes`
