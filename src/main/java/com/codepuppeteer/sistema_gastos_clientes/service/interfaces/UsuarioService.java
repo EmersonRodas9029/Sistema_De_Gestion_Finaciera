@@ -1,11 +1,11 @@
 package com.codepuppeteer.sistema_gastos_clientes.service.interfaces;
 
+import java.util.List;
+
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.CambiarPasswordRequest;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioResponse;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioSave;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioUpdate;
-
-import java.util.List;
 
 public interface UsuarioService {
 
