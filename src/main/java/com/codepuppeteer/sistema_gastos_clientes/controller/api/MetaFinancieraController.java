@@ -5,6 +5,7 @@ import com.codepuppeteer.sistema_gastos_clientes.entity.MetaFinanciera;
 import com.codepuppeteer.sistema_gastos_clientes.exception.ResourceNotFoundException;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.MetaFinancieraMapper;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.MetaFinancieraService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,13 +41,13 @@ public class MetaFinancieraController {
     }
 
     @PostMapping
-    public ResponseEntity<MetaFinancieraResponse> create(@RequestBody MetaFinancieraSave dto) {
+    public ResponseEntity<MetaFinancieraResponse> create(@Valid @RequestBody MetaFinancieraSave dto) {
         MetaFinanciera creada = metaFinancieraService.crearMeta(metaFinancieraMapper.toEntity(dto), dto.clienteId());
         return ResponseEntity.status(HttpStatus.CREATED).body(metaFinancieraMapper.toResponse(creada));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MetaFinancieraResponse> update(@PathVariable long id, @RequestBody MetaFinancieraUpdate dto) {
+    public ResponseEntity<MetaFinancieraResponse> update(@PathVariable long id, @Valid @RequestBody MetaFinancieraUpdate dto) {
         MetaFinanciera existente = metaFinancieraService.obtenerMetaPorId(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Meta financiera no encontrada"));
 

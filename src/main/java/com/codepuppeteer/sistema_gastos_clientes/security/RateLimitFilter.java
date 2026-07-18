@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -16,8 +18,12 @@ import jakarta.servlet.http.HttpServletResponse;
 public class RateLimitFilter extends OncePerRequestFilter {
 
     private final ConcurrentHashMap<String, RequestInfo> requests = new ConcurrentHashMap<>();
-    private final int MAX_REQUESTS = 200;
-    private final long TIME_WINDOW = TimeUnit.MINUTES.toMillis(1);
+
+    @Value("${ratelimit.max-requests:200}")
+    private int maxRequests;
+
+    @Value("${ratelimit.window-ms:60000}")
+    private long timeWindowMs;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -27,7 +33,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
         long currentTime = System.currentTimeMillis();
 
         requests.compute(ip, (k, v) -> {
-            if (v == null || currentTime - v.startTime > TIME_WINDOW) {
+            if (v == null || currentTime - v.startTime > timeWindowMs) {
                 return new RequestInfo(1, currentTime);
             } else {
                 v.count++;
@@ -35,13 +41,20 @@ public class RateLimitFilter extends OncePerRequestFilter {
             }
         });
 
-        if (requests.get(ip).count > MAX_REQUESTS) {
+        if (requests.get(ip).count > maxRequests) {
             response.setStatus(429);
             response.getWriter().write("Demasiadas solicitudes, espera un momento.");
             return;
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    // ponytail: barrido simple por IPs inactivas; si el tráfico crece mucho, cambiar a un cache con expiración nativa (Caffeine).
+    @Scheduled(fixedRate = 10 * 60 * 1000)
+    void limpiarEntradasVencidas() {
+        long ahora = System.currentTimeMillis();
+        requests.entrySet().removeIf(e -> ahora - e.getValue().startTime > timeWindowMs);
     }
 
     private static class RequestInfo {

@@ -10,6 +10,7 @@ import com.codepuppeteer.sistema_gastos_clientes.mapper.GastoMapper;
 import com.codepuppeteer.sistema_gastos_clientes.repository.CategoriaRepository;
 import com.codepuppeteer.sistema_gastos_clientes.repository.ClienteRepository;
 import com.codepuppeteer.sistema_gastos_clientes.repository.GastoRepository;
+import com.codepuppeteer.sistema_gastos_clientes.security.SecurityUtils;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.GastoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class GastoServiceImpl implements GastoService {
     private final ClienteRepository clienteRepository;
     private final CategoriaRepository categoriaRepository;
     private final GastoMapper gastoMapper;
+    private final SecurityUtils securityUtils;
 
     @Override
     public Gasto crearGastoConRelaciones(GastoSave gastoSave) {
@@ -35,6 +37,7 @@ public class GastoServiceImpl implements GastoService {
 
         Cliente cliente = clienteRepository.findById(Objects.requireNonNull(gastoSave.clienteId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
+        securityUtils.checkOwnership(cliente);
         gasto.setCliente(cliente);
 
         Long catId = gastoSave.categoriaId();
@@ -51,6 +54,7 @@ public class GastoServiceImpl implements GastoService {
     public Gasto actualizarGastoConRelaciones(long id, GastoUpdate gastoUpdate) {
         Gasto existente = gastoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Gasto no encontrado"));
+        securityUtils.checkOwnership(existente.getCliente());
 
         gastoMapper.updateFromDto(gastoUpdate, existente);
 
@@ -70,16 +74,34 @@ public class GastoServiceImpl implements GastoService {
     public void eliminarGasto(long id) {
         Gasto gasto = gastoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Gasto no encontrado"));
+        securityUtils.checkOwnership(gasto.getCliente());
         gastoRepository.delete(gasto);
     }
 
     @Override
     public Optional<Gasto> obtenerGastoPorId(long id) {
-        return gastoRepository.findById(id);
+        Optional<Gasto> gasto = gastoRepository.findById(id);
+        gasto.ifPresent(g -> securityUtils.checkOwnership(g.getCliente()));
+        return gasto;
     }
 
     @Override
     public List<Gasto> obtenerTodosLosGastos() {
-        return gastoRepository.findAll();
+        List<Gasto> gastos = gastoRepository.findAll();
+        if (!securityUtils.isContador()) {
+            Long usuarioId = securityUtils.getCurrentUser().getUsuarioId();
+            return gastos.stream()
+                    .filter(g -> g.getCliente() != null && g.getCliente().getUsuario().getId().equals(usuarioId))
+                    .toList();
+        }
+        return gastos;
+    }
+
+    @Override
+    public List<Gasto> obtenerGastosPorCliente(long clienteId) {
+        Cliente cliente = clienteRepository.findById(clienteId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
+        securityUtils.checkOwnership(cliente);
+        return gastoRepository.findByClienteId(clienteId);
     }
 }

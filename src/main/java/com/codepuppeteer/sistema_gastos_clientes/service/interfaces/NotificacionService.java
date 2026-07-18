@@ -17,4 +17,6 @@ public interface NotificacionService {
     Optional<Notificacion> obtenerNotificacionPorId(long id);
 
     List<Notificacion> obtenerTodasLasNotificaciones();
+
+    List<Notificacion> obtenerNotificacionesPorCliente(long clienteId);
 }

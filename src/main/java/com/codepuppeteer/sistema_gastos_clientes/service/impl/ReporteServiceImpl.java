@@ -10,6 +10,7 @@ import com.codepuppeteer.sistema_gastos_clientes.mapper.ReporteMapper;
 import com.codepuppeteer.sistema_gastos_clientes.repository.ClienteRepository;
 import com.codepuppeteer.sistema_gastos_clientes.repository.ReporteRepository;
 import com.codepuppeteer.sistema_gastos_clientes.repository.UsuarioRepository;
+import com.codepuppeteer.sistema_gastos_clientes.security.SecurityUtils;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.ReporteService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -53,6 +54,7 @@ public class ReporteServiceImpl implements ReporteService {
     private final UsuarioRepository usuarioRepository;
     private final ReporteMapper mapper;
     private final ObjectMapper objectMapper;
+    private final SecurityUtils securityUtils;
 
     @Override
     public Reporte crearReporte(ReporteSave dto) {
@@ -60,6 +62,7 @@ public class ReporteServiceImpl implements ReporteService {
 
         Cliente cliente = clienteRepository.findById(Objects.requireNonNull(dto.clienteId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
+        securityUtils.checkOwnership(cliente);
         reporte.setCliente(cliente);
 
         Long contadorId = dto.contadorId();
@@ -76,11 +79,13 @@ public class ReporteServiceImpl implements ReporteService {
     public Reporte actualizarReporte(long id, ReporteUpdate dto) {
         Reporte existente = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reporte no encontrado"));
+        securityUtils.checkOwnership(existente.getCliente());
 
         mapper.updateFromDto(dto, existente);
 
         Cliente cliente = clienteRepository.findById(Objects.requireNonNull(dto.clienteId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
+        securityUtils.checkOwnership(cliente);
         existente.setCliente(cliente);
 
         Long contadorId = dto.contadorId();
@@ -99,21 +104,34 @@ public class ReporteServiceImpl implements ReporteService {
     public void eliminarReporte(long id) {
         Reporte reporte = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reporte no encontrado"));
+        securityUtils.checkOwnership(reporte.getCliente());
         repository.delete(reporte);
     }
 
     @Override
     public Optional<Reporte> obtenerReportePorId(long id) {
-        return repository.findById(id);
+        Optional<Reporte> reporte = repository.findById(id);
+        reporte.ifPresent(r -> securityUtils.checkOwnership(r.getCliente()));
+        return reporte;
     }
 
     @Override
     public List<Reporte> obtenerTodosLosReportes() {
-        return repository.findAll();
+        List<Reporte> reportes = repository.findAll();
+        if (!securityUtils.isContador()) {
+            Long usuarioId = securityUtils.getCurrentUser().getUsuarioId();
+            return reportes.stream()
+                    .filter(r -> r.getCliente() != null && r.getCliente().getUsuario().getId().equals(usuarioId))
+                    .toList();
+        }
+        return reportes;
     }
 
     @Override
     public List<Reporte> obtenerReportesPorCliente(long clienteId) {
+        Cliente cliente = clienteRepository.findById(clienteId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
+        securityUtils.checkOwnership(cliente);
         return repository.findByClienteId(clienteId);
     }
 
@@ -131,6 +149,7 @@ public class ReporteServiceImpl implements ReporteService {
     public byte[] generarPdf(long id) {
         Reporte reporte = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reporte no encontrado"));
+        securityUtils.checkOwnership(reporte.getCliente());
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4, 40, 40, 40, 40);

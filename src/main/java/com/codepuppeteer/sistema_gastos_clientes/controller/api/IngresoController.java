@@ -2,7 +2,9 @@ package com.codepuppeteer.sistema_gastos_clientes.controller.api;
 
 import com.codepuppeteer.sistema_gastos_clientes.dto.ingreso.*;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.IngresoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,13 +17,18 @@ public class IngresoController {
 
     private final IngresoService ingresoService;
 
+    @GetMapping("/cliente/{clienteId}")
+    public ResponseEntity<List<IngresoList>> obtenerPorCliente(@PathVariable long clienteId) {
+        return ResponseEntity.ok(ingresoService.obtenerIngresosPorCliente(clienteId));
+    }
+
     @PostMapping
-    public ResponseEntity<IngresoResponse> crearIngreso(@RequestBody IngresoSave dto) {
-        return ResponseEntity.ok(ingresoService.crearIngreso(dto));
+    public ResponseEntity<IngresoResponse> crearIngreso(@Valid @RequestBody IngresoSave dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ingresoService.crearIngreso(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<IngresoResponse> actualizarIngreso(@PathVariable long id, @RequestBody IngresoUpdate dto) {
+    public ResponseEntity<IngresoResponse> actualizarIngreso(@PathVariable long id, @Valid @RequestBody IngresoUpdate dto) {
         return ResponseEntity.ok(ingresoService.actualizarIngreso(id, dto));
     }
 

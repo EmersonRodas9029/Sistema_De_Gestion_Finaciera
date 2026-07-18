@@ -15,4 +15,6 @@ public interface IngresoService {
     IngresoResponse obtenerIngresoPorId(long id);
 
     List<IngresoList> obtenerTodosLosIngresos();
+
+    List<IngresoList> obtenerIngresosPorCliente(long clienteId);
 }

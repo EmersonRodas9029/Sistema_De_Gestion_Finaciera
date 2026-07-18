@@ -2,6 +2,7 @@ package com.codepuppeteer.sistema_gastos_clientes.controller.api;
 
 import com.codepuppeteer.sistema_gastos_clientes.dto.gastorecurrente.*;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.GastoRecurrenteService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +17,12 @@ public class GastoRecurrenteController {
     private final GastoRecurrenteService service;
 
     @PostMapping
-    public ResponseEntity<GastoRecurrenteResponse> save(@RequestBody GastoRecurrenteSave dto) {
+    public ResponseEntity<GastoRecurrenteResponse> save(@Valid @RequestBody GastoRecurrenteSave dto) {
         return ResponseEntity.ok(service.save(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GastoRecurrenteResponse> update(@PathVariable long id, @RequestBody GastoRecurrenteUpdate dto) {
+    public ResponseEntity<GastoRecurrenteResponse> update(@PathVariable long id, @Valid @RequestBody GastoRecurrenteUpdate dto) {
         return ResponseEntity.ok(service.update(id, dto));
     }
 

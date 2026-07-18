@@ -8,6 +8,7 @@ import com.codepuppeteer.sistema_gastos_clientes.entity.Cliente;
 import com.codepuppeteer.sistema_gastos_clientes.entity.Usuario;
 import com.codepuppeteer.sistema_gastos_clientes.enums.Rol;
 import com.codepuppeteer.sistema_gastos_clientes.exception.BusinessException;
+import com.codepuppeteer.sistema_gastos_clientes.exception.ForbiddenException;
 import com.codepuppeteer.sistema_gastos_clientes.exception.ResourceNotFoundException;
 import com.codepuppeteer.sistema_gastos_clientes.exception.UnauthorizedException;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.ClienteMapper;
@@ -23,6 +24,7 @@ import com.codepuppeteer.sistema_gastos_clientes.repository.NotificacionReposito
 import com.codepuppeteer.sistema_gastos_clientes.repository.PresupuestoRepository;
 import com.codepuppeteer.sistema_gastos_clientes.repository.ReporteRepository;
 import com.codepuppeteer.sistema_gastos_clientes.repository.UsuarioRepository;
+import com.codepuppeteer.sistema_gastos_clientes.security.SecurityUtils;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -50,6 +52,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final NotificacionRepository notificacionRepository;
     private final GastoRecurrenteRepository gastoRecurrenteRepository;
     private final CategoriaRepository categoriaRepository;
+    private final SecurityUtils securityUtils;
 
     // Usuario no tiene referencia directa a Cliente (la FK vive del lado de Cliente),
     // así que el cliente asociado se resuelve aparte y se agrega al DTO de respuesta.
@@ -97,6 +100,10 @@ public class UsuarioServiceImpl implements UsuarioService {
     public void cambiarPassword(long id, CambiarPasswordRequest request) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
+
+        if (!securityUtils.isContador() && !securityUtils.getCurrentUser().getUsuarioId().equals(id)) {
+            throw new ForbiddenException("No tienes permiso para cambiar la contraseña de otro usuario");
+        }
 
         if (!passwordEncoder.matches(request.passwordActual(), usuario.getPassword())) {
             throw new UnauthorizedException("La contraseña actual no coincide");

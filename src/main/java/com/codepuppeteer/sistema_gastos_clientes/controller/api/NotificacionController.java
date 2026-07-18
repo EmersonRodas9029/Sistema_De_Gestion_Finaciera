@@ -5,6 +5,7 @@ import com.codepuppeteer.sistema_gastos_clientes.dto.notificacion.*;
 import com.codepuppeteer.sistema_gastos_clientes.exception.ResourceNotFoundException;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.NotificacionMapper;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.NotificacionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,8 +34,13 @@ public class NotificacionController {
         return ResponseEntity.ok(mapper.toResponse(notificacion));
     }
 
+    @GetMapping("/cliente/{clienteId}")
+    public ResponseEntity<List<NotificacionResponse>> getByCliente(@PathVariable long clienteId) {
+        return ResponseEntity.ok(mapper.toList(service.obtenerNotificacionesPorCliente(clienteId)));
+    }
+
     @PostMapping
-    public ResponseEntity<NotificacionResponse> create(@RequestBody NotificacionSave dto) {
+    public ResponseEntity<NotificacionResponse> create(@Valid @RequestBody NotificacionSave dto) {
         Notificacion creado = service.crearNotificacion(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(creado));
     }

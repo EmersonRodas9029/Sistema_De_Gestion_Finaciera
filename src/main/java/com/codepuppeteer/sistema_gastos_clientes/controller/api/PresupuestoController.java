@@ -2,8 +2,10 @@ package com.codepuppeteer.sistema_gastos_clientes.controller.api;
 
 import com.codepuppeteer.sistema_gastos_clientes.dto.presupuesto.*;
 import com.codepuppeteer.sistema_gastos_clientes.entity.Presupuesto;
+import com.codepuppeteer.sistema_gastos_clientes.exception.ResourceNotFoundException;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.PresupuestoMapper;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.PresupuestoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,12 +30,17 @@ public class PresupuestoController {
     @GetMapping("/{id}")
     public ResponseEntity<PresupuestoResponse> getById(@PathVariable long id) {
         Presupuesto presupuesto = service.obtenerPresupuestoPorId(id)
-                .orElseThrow(() -> new RuntimeException("Presupuesto no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Presupuesto no encontrado"));
         return ResponseEntity.ok(mapper.toResponse(presupuesto));
     }
 
+    @GetMapping("/cliente/{clienteId}")
+    public ResponseEntity<List<PresupuestoList>> getByCliente(@PathVariable long clienteId) {
+        return ResponseEntity.ok(mapper.toList(service.obtenerPresupuestosPorCliente(clienteId)));
+    }
+
     @PostMapping
-    public ResponseEntity<PresupuestoResponse> create(@RequestBody PresupuestoSave dto) {
+    public ResponseEntity<PresupuestoResponse> create(@Valid @RequestBody PresupuestoSave dto) {
         Presupuesto creado = service.crearPresupuestoConRelaciones(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(creado));
     }
@@ -41,7 +48,7 @@ public class PresupuestoController {
     @PutMapping("/{id}")
     public ResponseEntity<PresupuestoResponse> update(
             @PathVariable long id,
-            @RequestBody PresupuestoUpdate dto) {
+            @Valid @RequestBody PresupuestoUpdate dto) {
         Presupuesto actualizado = service.actualizarPresupuestoConRelaciones(id, dto);
         return ResponseEntity.ok(mapper.toResponse(actualizado));
     }

@@ -7,6 +7,7 @@ import com.codepuppeteer.sistema_gastos_clientes.exception.ResourceNotFoundExcep
 import com.codepuppeteer.sistema_gastos_clientes.mapper.ClienteMapper;
 import com.codepuppeteer.sistema_gastos_clientes.repository.ClienteRepository;
 import com.codepuppeteer.sistema_gastos_clientes.repository.UsuarioRepository;
+import com.codepuppeteer.sistema_gastos_clientes.security.SecurityUtils;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.ClienteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class ClienteServiceImpl implements ClienteService {
     private final ClienteRepository clienteRepository;
     private final UsuarioRepository usuarioRepository;
     private final ClienteMapper clienteMapper;
+    private final SecurityUtils securityUtils;
 
     @Override
     public ClienteResponse createCliente(ClienteSave dto, Long usuarioId) {
@@ -36,6 +38,7 @@ public class ClienteServiceImpl implements ClienteService {
     public ClienteResponse updateCliente(long id, ClienteUpdate dto) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + id));
+        securityUtils.checkOwnership(cliente);
         clienteMapper.updateFromDto(dto, cliente);
         return clienteMapper.toResponse(clienteRepository.save(cliente));
     }
@@ -44,6 +47,7 @@ public class ClienteServiceImpl implements ClienteService {
     public void deleteCliente(long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + id));
+        securityUtils.checkOwnership(cliente);
         cliente.setActivo(false);
         clienteRepository.save(cliente);
     }

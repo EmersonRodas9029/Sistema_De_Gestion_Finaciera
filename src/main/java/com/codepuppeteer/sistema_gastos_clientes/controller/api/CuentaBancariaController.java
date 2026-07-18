@@ -4,6 +4,7 @@ import com.codepuppeteer.sistema_gastos_clientes.entity.CuentaBancaria;
 import com.codepuppeteer.sistema_gastos_clientes.dto.cuenta.*;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.CuentaBancariaMapper;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.CuentaBancariaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +32,13 @@ public class CuentaBancariaController {
         return ResponseEntity.ok(mapper.toResponse(cuenta));
     }
 
+    @GetMapping("/cliente/{clienteId}")
+    public ResponseEntity<List<CuentaBancariaList>> getByCliente(@PathVariable long clienteId) {
+        return ResponseEntity.ok(mapper.toList(cuentaService.obtenerCuentasPorCliente(clienteId)));
+    }
+
     @PostMapping
-    public ResponseEntity<CuentaBancariaResponse> createCuenta(@RequestBody CuentaBancariaSave dto) {
+    public ResponseEntity<CuentaBancariaResponse> createCuenta(@Valid @RequestBody CuentaBancariaSave dto) {
         CuentaBancaria creado = cuentaService.crearCuentaConCliente(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(creado));
     }

@@ -1,9 +1,9 @@
 package com.codepuppeteer.sistema_gastos_clientes.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -25,28 +26,19 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final RateLimitFilter rateLimitFilter;
 
+    @Value("${cors.allowed-origins:http://localhost:5173,http://localhost:4173}")
+    private String allowedOrigins;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        // Endpoints públicos
+                        // Único endpoint público: login/registro
                         .requestMatchers("/api/auth/**").permitAll()
-                        // Endpoints de la API
-                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/*/password").authenticated()
-                        .requestMatchers("/api/usuarios/**").permitAll()
-                        .requestMatchers("/api/clientes/**").permitAll()
-                        .requestMatchers("/api/categorias/**").permitAll()
-                        .requestMatchers("/api/gastos/**").permitAll()
-                        .requestMatchers("/api/ingresos/**").permitAll()
-                        .requestMatchers("/api/presupuestos/**").permitAll()
-                        .requestMatchers("/api/metas/**").permitAll()
-                        .requestMatchers("/api/gastos-recurrentes/**").permitAll()
-                        .requestMatchers("/api/cuentas/**").permitAll()
-                        .requestMatchers("/api/reportes/**").permitAll()
-                        .requestMatchers("/api/notificaciones/**").permitAll()
-                        .requestMatchers("/api/configuraciones/**").permitAll()
+                        // Todo lo demás requiere JWT válido; la autorización por dueño
+                        // del recurso se aplica dentro de cada servicio (ver ForbiddenException)
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
@@ -77,7 +69,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("*"));
+        config.setAllowedOriginPatterns(Arrays.asList(allowedOrigins.split(",")));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

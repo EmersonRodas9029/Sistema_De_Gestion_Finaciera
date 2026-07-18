@@ -5,6 +5,7 @@ import com.codepuppeteer.sistema_gastos_clientes.entity.Configuracion;
 import com.codepuppeteer.sistema_gastos_clientes.exception.ResourceNotFoundException;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.ConfiguracionMapper;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.ConfiguracionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public class ConfiguracionController {
     }
 
     @PostMapping
-    public ResponseEntity<ConfiguracionResponse> create(@RequestBody ConfiguracionSave dto) {
+    public ResponseEntity<ConfiguracionResponse> create(@Valid @RequestBody ConfiguracionSave dto) {
         Configuracion creado = service.crearConfiguracion(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(creado));
     }

@@ -18,4 +18,6 @@ public interface GastoService {
     Optional<Gasto> obtenerGastoPorId(long id);
 
     List<Gasto> obtenerTodosLosGastos();
+
+    List<Gasto> obtenerGastosPorCliente(long clienteId);
 }

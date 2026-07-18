@@ -16,4 +16,6 @@ public interface CuentaBancariaService {
     Optional<CuentaBancaria> obtenerCuentaPorId(long id);
 
     List<CuentaBancaria> obtenerTodasLasCuentas();
+
+    List<CuentaBancaria> obtenerCuentasPorCliente(long clienteId);
 }

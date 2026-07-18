@@ -9,6 +9,7 @@ import com.codepuppeteer.sistema_gastos_clientes.mapper.GastoRecurrenteMapper;
 import com.codepuppeteer.sistema_gastos_clientes.repository.CategoriaRepository;
 import com.codepuppeteer.sistema_gastos_clientes.repository.ClienteRepository;
 import com.codepuppeteer.sistema_gastos_clientes.repository.GastoRecurrenteRepository;
+import com.codepuppeteer.sistema_gastos_clientes.security.SecurityUtils;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.GastoRecurrenteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,12 +26,14 @@ public class GastoRecurrenteServiceImpl implements GastoRecurrenteService {
     private final ClienteRepository clienteRepository;
     private final CategoriaRepository categoriaRepository;
     private final GastoRecurrenteMapper mapper;
+    private final SecurityUtils securityUtils;
 
     @Override
     @Transactional
     public GastoRecurrenteResponse save(GastoRecurrenteSave dto) {
         Cliente cliente = clienteRepository.findById(Objects.requireNonNull(dto.clienteId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
+        securityUtils.checkOwnership(cliente);
         Long catId = dto.categoriaId();
         Categoria categoria = catId != null
                 ? categoriaRepository.findById(catId)
@@ -48,6 +51,7 @@ public class GastoRecurrenteServiceImpl implements GastoRecurrenteService {
     public GastoRecurrenteResponse update(long id, GastoRecurrenteUpdate dto) {
         GastoRecurrente entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Gasto recurrente no encontrado"));
+        securityUtils.checkOwnership(entity.getCliente());
         mapper.updateFromDto(dto, entity);
         return mapper.toResponse(repository.save(entity));
     }
@@ -58,18 +62,23 @@ public class GastoRecurrenteServiceImpl implements GastoRecurrenteService {
     public void delete(long id) {
         GastoRecurrente entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Gasto recurrente no encontrado"));
+        securityUtils.checkOwnership(entity.getCliente());
         repository.delete(entity);
     }
 
     @Override
     public GastoRecurrenteResponse getById(long id) {
-        return repository.findById(id)
-                .map(mapper::toResponse)
+        GastoRecurrente entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Gasto recurrente no encontrado"));
+        securityUtils.checkOwnership(entity.getCliente());
+        return mapper.toResponse(entity);
     }
 
     @Override
     public List<GastoRecurrenteList> getAllByCliente(long clienteId) {
+        Cliente cliente = clienteRepository.findById(clienteId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
+        securityUtils.checkOwnership(cliente);
         return mapper.toList(repository.findByClienteId(clienteId));
     }
 }

@@ -5,6 +5,7 @@ import com.codepuppeteer.sistema_gastos_clientes.entity.Reporte;
 import com.codepuppeteer.sistema_gastos_clientes.exception.ResourceNotFoundException;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.ReporteMapper;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.ReporteService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -51,7 +52,7 @@ public class ReporteController {
     }
 
     @PostMapping
-    public ResponseEntity<ReporteResponse> createReporte(@RequestBody ReporteSave dto) {
+    public ResponseEntity<ReporteResponse> createReporte(@Valid @RequestBody ReporteSave dto) {
         Reporte creado = service.crearReporte(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(creado));
     }

@@ -8,6 +8,7 @@ import com.codepuppeteer.sistema_gastos_clientes.repository.CuentaBancariaReposi
 import com.codepuppeteer.sistema_gastos_clientes.repository.ClienteRepository;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.CuentaBancariaService;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.CuentaBancariaMapper;
+import com.codepuppeteer.sistema_gastos_clientes.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
     private final CuentaBancariaRepository repository;
     private final ClienteRepository clienteRepository;
     private final CuentaBancariaMapper mapper;
+    private final SecurityUtils securityUtils;
 
     @Override
     public CuentaBancaria crearCuentaConCliente(CuentaBancariaSave dto) {
@@ -34,7 +36,8 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
         CuentaBancaria cuenta = mapper.toEntity(dto);
 
         Cliente cliente = clienteRepository.findById(Objects.requireNonNull(dto.clienteId()))
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
+        securityUtils.checkOwnership(cliente);
         cuenta.setCliente(cliente);
 
         if (cuenta.getSaldoActual() == null) cuenta.setSaldoActual(BigDecimal.ZERO);
@@ -48,6 +51,7 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
     public CuentaBancaria actualizarCuentaConCliente(long id, CuentaBancariaUpdate dto) {
         CuentaBancaria cuenta = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cuenta no encontrada"));
+        securityUtils.checkOwnership(cuenta.getCliente());
 
         mapper.updateFromDto(dto, cuenta);
 
@@ -55,6 +59,7 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
         if (clienteId != null) {
             Cliente cliente = clienteRepository.findById(clienteId)
                     .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
+            securityUtils.checkOwnership(cliente);
             cuenta.setCliente(cliente);
         }
 
@@ -70,16 +75,34 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
     public void eliminarCuenta(long id) {
         CuentaBancaria cuenta = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cuenta no encontrada"));
+        securityUtils.checkOwnership(cuenta.getCliente());
         repository.delete(cuenta);
     }
 
     @Override
     public Optional<CuentaBancaria> obtenerCuentaPorId(long id) {
-        return repository.findById(id);
+        Optional<CuentaBancaria> cuenta = repository.findById(id);
+        cuenta.ifPresent(c -> securityUtils.checkOwnership(c.getCliente()));
+        return cuenta;
     }
 
     @Override
     public List<CuentaBancaria> obtenerTodasLasCuentas() {
-        return repository.findAll();
+        List<CuentaBancaria> cuentas = repository.findAll();
+        if (!securityUtils.isContador()) {
+            Long usuarioId = securityUtils.getCurrentUser().getUsuarioId();
+            return cuentas.stream()
+                    .filter(c -> c.getCliente() != null && c.getCliente().getUsuario().getId().equals(usuarioId))
+                    .toList();
+        }
+        return cuentas;
+    }
+
+    @Override
+    public List<CuentaBancaria> obtenerCuentasPorCliente(long clienteId) {
+        Cliente cliente = clienteRepository.findById(clienteId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
+        securityUtils.checkOwnership(cliente);
+        return repository.findByClienteId(clienteId);
     }
 }
