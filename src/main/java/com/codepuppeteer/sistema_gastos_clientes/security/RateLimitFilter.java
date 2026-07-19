@@ -25,15 +25,25 @@ public class RateLimitFilter extends OncePerRequestFilter {
     @Value("${ratelimit.window-ms:60000}")
     private long timeWindowMs;
 
+    // Límite propio, más estricto, para login y cambio de contraseña (fuerza bruta / credential stuffing)
+    @Value("${ratelimit.auth-max-requests:10}")
+    private int authMaxRequests;
+
+    @Value("${ratelimit.auth-window-ms:60000}")
+    private long authTimeWindowMs;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String ip = request.getRemoteAddr();
+        boolean sensitive = isSensitive(request);
+        String key = request.getRemoteAddr() + (sensitive ? "|auth" : "|general");
+        int limit = sensitive ? authMaxRequests : maxRequests;
+        long window = sensitive ? authTimeWindowMs : timeWindowMs;
         long currentTime = System.currentTimeMillis();
 
-        requests.compute(ip, (k, v) -> {
-            if (v == null || currentTime - v.startTime > timeWindowMs) {
+        requests.compute(key, (k, v) -> {
+            if (v == null || currentTime - v.startTime > window) {
                 return new RequestInfo(1, currentTime);
             } else {
                 v.count++;
@@ -41,7 +51,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
             }
         });
 
-        if (requests.get(ip).count > maxRequests) {
+        if (requests.get(key).count > limit) {
             response.setStatus(429);
             response.getWriter().write("Demasiadas solicitudes, espera un momento.");
             return;
@@ -50,11 +60,17 @@ public class RateLimitFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    private boolean isSensitive(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        return uri.equals("/api/auth/login") || uri.endsWith("/password");
+    }
+
     // ponytail: barrido simple por IPs inactivas; si el tráfico crece mucho, cambiar a un cache con expiración nativa (Caffeine).
     @Scheduled(fixedRate = 10 * 60 * 1000)
     void limpiarEntradasVencidas() {
         long ahora = System.currentTimeMillis();
-        requests.entrySet().removeIf(e -> ahora - e.getValue().startTime > timeWindowMs);
+        long maxWindow = Math.max(timeWindowMs, authTimeWindowMs);
+        requests.entrySet().removeIf(e -> ahora - e.getValue().startTime > maxWindow);
     }
 
     private static class RequestInfo {

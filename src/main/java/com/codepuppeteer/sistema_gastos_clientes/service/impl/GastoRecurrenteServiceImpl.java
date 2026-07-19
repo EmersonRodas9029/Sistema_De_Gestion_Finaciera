@@ -20,6 +20,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class GastoRecurrenteServiceImpl implements GastoRecurrenteService {
 
     private final GastoRecurrenteRepository repository;
@@ -29,7 +30,6 @@ public class GastoRecurrenteServiceImpl implements GastoRecurrenteService {
     private final SecurityUtils securityUtils;
 
     @Override
-    @Transactional
     public GastoRecurrenteResponse save(GastoRecurrenteSave dto) {
         Cliente cliente = clienteRepository.findById(Objects.requireNonNull(dto.clienteId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado"));
@@ -47,7 +47,6 @@ public class GastoRecurrenteServiceImpl implements GastoRecurrenteService {
     }
 
     @Override
-    @Transactional
     public GastoRecurrenteResponse update(long id, GastoRecurrenteUpdate dto) {
         GastoRecurrente entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Gasto recurrente no encontrado"));
@@ -58,7 +57,6 @@ public class GastoRecurrenteServiceImpl implements GastoRecurrenteService {
 
 
     @Override
-    @Transactional
     public void delete(long id) {
         GastoRecurrente entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Gasto recurrente no encontrado"));

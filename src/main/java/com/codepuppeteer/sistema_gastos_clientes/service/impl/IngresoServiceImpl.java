@@ -69,14 +69,10 @@ public class IngresoServiceImpl implements IngresoService {
 
     @Override
     public List<IngresoList> obtenerTodosLosIngresos() {
-        List<Ingreso> ingresos = ingresoRepository.findAll();
         if (!securityUtils.isContador()) {
-            Long usuarioId = securityUtils.getCurrentUser().getUsuarioId();
-            ingresos = ingresos.stream()
-                    .filter(i -> i.getCliente() != null && i.getCliente().getUsuario().getId().equals(usuarioId))
-                    .toList();
+            return ingresoMapper.toList(ingresoRepository.findByCliente_Usuario_Id(securityUtils.getCurrentUser().getUsuarioId()));
         }
-        return ingresoMapper.toList(ingresos);
+        return ingresoMapper.toList(ingresoRepository.findAll());
     }
 
     @Override

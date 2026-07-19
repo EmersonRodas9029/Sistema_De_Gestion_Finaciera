@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface ReporteRepository extends JpaRepository<Reporte, Long> {
     List<Reporte> findByClienteId(long clienteId);
+    List<Reporte> findByCliente_Usuario_Id(long usuarioId);
     List<Reporte> findByContadorId(long contadorId);
     boolean existsByClienteId(long clienteId);
 }

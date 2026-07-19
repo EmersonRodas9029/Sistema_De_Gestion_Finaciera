@@ -87,14 +87,10 @@ public class GastoServiceImpl implements GastoService {
 
     @Override
     public List<Gasto> obtenerTodosLosGastos() {
-        List<Gasto> gastos = gastoRepository.findAll();
         if (!securityUtils.isContador()) {
-            Long usuarioId = securityUtils.getCurrentUser().getUsuarioId();
-            return gastos.stream()
-                    .filter(g -> g.getCliente() != null && g.getCliente().getUsuario().getId().equals(usuarioId))
-                    .toList();
+            return gastoRepository.findByCliente_Usuario_Id(securityUtils.getCurrentUser().getUsuarioId());
         }
-        return gastos;
+        return gastoRepository.findAll();
     }
 
     @Override

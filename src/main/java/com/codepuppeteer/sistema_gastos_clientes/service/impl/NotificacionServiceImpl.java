@@ -69,14 +69,10 @@ public class NotificacionServiceImpl implements NotificacionService {
 
     @Override
     public List<Notificacion> obtenerTodasLasNotificaciones() {
-        List<Notificacion> notificaciones = repository.findAll();
         if (!securityUtils.isContador()) {
-            Long usuarioId = securityUtils.getCurrentUser().getUsuarioId();
-            return notificaciones.stream()
-                    .filter(n -> n.getCliente() != null && n.getCliente().getUsuario().getId().equals(usuarioId))
-                    .toList();
+            return repository.findByCliente_Usuario_Id(securityUtils.getCurrentUser().getUsuarioId());
         }
-        return notificaciones;
+        return repository.findAll();
     }
 
     @Override

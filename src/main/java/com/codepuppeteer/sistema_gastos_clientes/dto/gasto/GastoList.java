@@ -7,8 +7,11 @@ import java.time.LocalDate;
 
 public record GastoList(
         Long id,
+        Long clienteId,
+        Long categoriaId,
         BigDecimal monto,
         LocalDate fecha,
+        String descripcion,
         MetodoPago metodoPago,
         Boolean esRecurrente,
         Frecuencia frecuencia,

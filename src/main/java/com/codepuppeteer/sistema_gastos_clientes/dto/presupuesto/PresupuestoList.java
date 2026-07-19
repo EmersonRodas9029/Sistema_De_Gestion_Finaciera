@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 public record PresupuestoList(
         Long id,
+        Long clienteId,
+        Long categoriaId,
         BigDecimal montoPresupuestado,
         Integer mes,
         Integer anio,

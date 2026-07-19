@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface NotificacionRepository extends JpaRepository<Notificacion, Long> {
     List<Notificacion> findByClienteId(long clienteId);
+    List<Notificacion> findByCliente_Usuario_Id(long usuarioId);
     boolean existsByClienteId(long clienteId);
 }

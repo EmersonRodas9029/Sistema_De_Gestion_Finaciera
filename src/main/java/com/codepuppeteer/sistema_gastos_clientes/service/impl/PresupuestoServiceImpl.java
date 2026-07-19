@@ -87,7 +87,10 @@ public class PresupuestoServiceImpl implements PresupuestoService {
 
     @Override
     public List<Presupuesto> obtenerTodosLosPresupuestos() {
-        return filtrarPorPropietario(presupuestoRepository.findAll());
+        if (!securityUtils.isContador()) {
+            return presupuestoRepository.findByCliente_Usuario_Id(securityUtils.getCurrentUser().getUsuarioId());
+        }
+        return presupuestoRepository.findAll();
     }
 
     @Override
@@ -100,14 +103,10 @@ public class PresupuestoServiceImpl implements PresupuestoService {
 
     @Override
     public List<Presupuesto> obtenerPresupuestosPorCategoria(long categoriaId) {
-        return filtrarPorPropietario(presupuestoRepository.findByCategoriaId(categoriaId));
-    }
-
-    private List<Presupuesto> filtrarPorPropietario(List<Presupuesto> presupuestos) {
-        if (securityUtils.isContador()) return presupuestos;
-        Long usuarioId = securityUtils.getCurrentUser().getUsuarioId();
-        return presupuestos.stream()
-                .filter(p -> p.getCliente() != null && p.getCliente().getUsuario().getId().equals(usuarioId))
-                .toList();
+        if (!securityUtils.isContador()) {
+            return presupuestoRepository.findByCategoriaIdAndCliente_Usuario_Id(
+                    categoriaId, securityUtils.getCurrentUser().getUsuarioId());
+        }
+        return presupuestoRepository.findByCategoriaId(categoriaId);
     }
 }

@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface IngresoRepository extends JpaRepository<Ingreso, Long> {
     List<Ingreso> findByClienteId(long clienteId);
+    List<Ingreso> findByCliente_Usuario_Id(long usuarioId);
     boolean existsByClienteId(long clienteId);
 }

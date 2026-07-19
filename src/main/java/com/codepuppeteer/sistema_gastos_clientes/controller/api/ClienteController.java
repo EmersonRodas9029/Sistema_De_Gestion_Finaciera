@@ -2,6 +2,7 @@ package com.codepuppeteer.sistema_gastos_clientes.controller.api;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -42,13 +43,13 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<ClienteResponse> createCliente(@RequestBody ClienteSave dto, Authentication auth) {
+    public ResponseEntity<ClienteResponse> createCliente(@Valid @RequestBody ClienteSave dto, Authentication auth) {
         Long usuarioId = ((UsuarioDetails) auth.getPrincipal()).getUsuarioId();
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.createCliente(dto, usuarioId));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteResponse> updateCliente(@PathVariable long id, @RequestBody ClienteUpdate dto) {
+    public ResponseEntity<ClienteResponse> updateCliente(@PathVariable long id, @Valid @RequestBody ClienteUpdate dto) {
         return ResponseEntity.ok(clienteService.updateCliente(id, dto));
     }
 

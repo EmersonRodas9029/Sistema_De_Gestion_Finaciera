@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface CuentaBancariaRepository extends JpaRepository<CuentaBancaria, Long> {
     List<CuentaBancaria> findByClienteId(long clienteId);
+    List<CuentaBancaria> findByCliente_Usuario_Id(long usuarioId);
     boolean existsByClienteId(long clienteId);
 }

@@ -15,6 +15,8 @@ public abstract class PresupuestoMapper {
     @Mapping(source = "categoria.id", target = "categoriaId")
     public abstract PresupuestoResponse toResponse(Presupuesto presupuesto);
 
+    @Mapping(source = "cliente.id", target = "clienteId")
+    @Mapping(source = "categoria.id", target = "categoriaId")
     public abstract PresupuestoList toList(Presupuesto presupuesto);
 
     public abstract List<PresupuestoList> toList(List<Presupuesto> presupuestos);

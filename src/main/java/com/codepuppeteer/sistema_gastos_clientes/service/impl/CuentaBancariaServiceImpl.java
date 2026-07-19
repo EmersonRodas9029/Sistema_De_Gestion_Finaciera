@@ -88,14 +88,10 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
 
     @Override
     public List<CuentaBancaria> obtenerTodasLasCuentas() {
-        List<CuentaBancaria> cuentas = repository.findAll();
         if (!securityUtils.isContador()) {
-            Long usuarioId = securityUtils.getCurrentUser().getUsuarioId();
-            return cuentas.stream()
-                    .filter(c -> c.getCliente() != null && c.getCliente().getUsuario().getId().equals(usuarioId))
-                    .toList();
+            return repository.findByCliente_Usuario_Id(securityUtils.getCurrentUser().getUsuarioId());
         }
-        return cuentas;
+        return repository.findAll();
     }
 
     @Override

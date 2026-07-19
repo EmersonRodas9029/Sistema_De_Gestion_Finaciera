@@ -7,10 +7,14 @@ import java.time.LocalDate;
 
 public record MetaFinancieraList(
         Long id,
+        Long clienteId,
         String nombre,
+        String descripcion,
         BigDecimal montoObjetivo,
         BigDecimal montoActual,
         LocalDate fechaLimite,
         Prioridad prioridad,
-        Boolean completada
+        Boolean activa,
+        Boolean completada,
+        LocalDate fechaCompletada
 ) {}

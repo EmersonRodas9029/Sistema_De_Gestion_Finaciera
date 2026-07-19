@@ -7,8 +7,15 @@ import java.time.LocalDate;
 
 public record GastoRecurrenteList(
         Long id,
+        Long clienteId,
+        Long categoriaId,
         BigDecimal monto,
+        String descripcion,
         Frecuencia frecuencia,
         LocalDate fechaInicio,
-        Boolean activo
+        LocalDate fechaFin,
+        Integer diaMes,
+        Integer diaSemana,
+        Boolean activo,
+        LocalDate ultimoProcesamiento
 ) {}

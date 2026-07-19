@@ -9,17 +9,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Logger SECURITY_LOG = LoggerFactory.getLogger("SECURITY");
 
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<Map<String,Object>> handleForbidden(ForbiddenException ex) {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        var attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        String path = attrs != null ? attrs.getRequest().getRequestURI() : "?";
+        SECURITY_LOG.warn("Acceso denegado: usuario '{}' en {} — {}",
+                auth != null ? auth.getName() : "anónimo", path, ex.getMessage());
+
         Map<String,Object> body = new HashMap<>();
         body.put("error", "Forbidden");
         body.put("message", ex.getMessage());

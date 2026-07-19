@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface GastoRecurrenteRepository extends JpaRepository<GastoRecurrente, Long> {
     List<GastoRecurrente> findByClienteId(long clienteId);
+    List<GastoRecurrente> findByActivoTrue();
     boolean existsByClienteId(long clienteId);
 }

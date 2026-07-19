@@ -10,6 +10,7 @@ import com.codepuppeteer.sistema_gastos_clientes.repository.UsuarioRepository;
 import com.codepuppeteer.sistema_gastos_clientes.security.SecurityUtils;
 import com.codepuppeteer.sistema_gastos_clientes.service.interfaces.ClienteService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,12 +57,23 @@ public class ClienteServiceImpl implements ClienteService {
     public ClienteResponse getClienteById(long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + id));
+        securityUtils.checkOwnership(cliente);
         return clienteMapper.toResponse(cliente);
     }
 
     @Override
     public List<ClienteList> getAllClientes(Boolean activo) {
-        var clientes = activo != null ? clienteRepository.findByActivo(activo) : clienteRepository.findAll();
-        return clienteMapper.toList(clientes);
+        if (!securityUtils.isContador()) {
+            var propio = clienteRepository.findByUsuarioId(securityUtils.getCurrentUser().getUsuarioId())
+                    .filter(c -> activo == null || activo.equals(c.getActivo()))
+                    .map(List::of)
+                    .orElse(List.of());
+            return clienteMapper.toList(propio);
+        }
+        // ponytail: tope duro de 1000 en vez de findAll() sin límite; si el volumen de clientes
+        // supera eso en la práctica, aquí es donde se añade paginación real de cara al frontend.
+        var page = PageRequest.of(0, 1000);
+        var clientes = activo != null ? clienteRepository.findByActivo(activo, page) : clienteRepository.findAll(page);
+        return clienteMapper.toList(clientes.getContent());
     }
 }

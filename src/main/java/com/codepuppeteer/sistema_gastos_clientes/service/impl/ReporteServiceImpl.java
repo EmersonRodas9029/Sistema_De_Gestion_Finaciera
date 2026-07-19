@@ -117,14 +117,10 @@ public class ReporteServiceImpl implements ReporteService {
 
     @Override
     public List<Reporte> obtenerTodosLosReportes() {
-        List<Reporte> reportes = repository.findAll();
         if (!securityUtils.isContador()) {
-            Long usuarioId = securityUtils.getCurrentUser().getUsuarioId();
-            return reportes.stream()
-                    .filter(r -> r.getCliente() != null && r.getCliente().getUsuario().getId().equals(usuarioId))
-                    .toList();
+            return repository.findByCliente_Usuario_Id(securityUtils.getCurrentUser().getUsuarioId());
         }
-        return reportes;
+        return repository.findAll();
     }
 
     @Override

@@ -90,7 +90,27 @@ El detalle completo de endpoints, cuerpos de petición y tipos de datos está en
 
 ## 🔒 Seguridad
 
-Autenticación vía JWT (`JwtAuthenticationFilter`) con `RateLimitFilter` corriendo antes del filtro de autenticación. Actualmente todos los endpoints `/api/**` están configurados como `permitAll()` — la validación de JWT se ejecuta igualmente, pero la autorización está abierta.
+Autenticación vía JWT (`JwtAuthenticationFilter`) con `RateLimitFilter` corriendo antes del filtro de autenticación. Solo `/api/auth/**` es público (`permitAll()`); el resto de `/api/**` exige JWT válido (`anyRequest().authenticated()`). La autorización por dueño del recurso (IDOR) se aplica dentro de cada `ServiceImpl` vía `SecurityUtils.checkOwnership(...)`, con el rol `CONTADOR` viendo todos los recursos y `CLIENTE` limitado a los suyos.
+
+## ⚙️ Variables de entorno en producción
+
+Todas tienen un default apto solo para desarrollo local; en producción hay que sobreescribirlas:
+
+| Variable | Uso | Default (dev) |
+|---|---|---|
+| `PORT` | Puerto HTTP del servidor | `8080` |
+| `DB_HOST` | Host de MySQL | `localhost` |
+| `DB_PORT` | Puerto de MySQL | `3307` |
+| `DB_NAME` | Nombre de la base de datos | `sistema_gastos_clientes` |
+| `DB_USERNAME` | Usuario de MySQL | `root` |
+| `DB_PASSWORD` | Password de MySQL | *(hardcodeado en dev — cambiar siempre en prod)* |
+| `JWT_SECRET` | Clave HMAC para firmar los JWT (Base64, mínimo 256 bits) | valor de ejemplo ya público en el historial del repo — **generar uno nuevo** |
+| `JWT_EXPIRATION` | Expiración del JWT en ms | `86400000` (24h) |
+| `CORS_ALLOWED_ORIGINS` | Orígenes permitidos por CORS, separados por coma | `http://localhost:5173,http://localhost:4173` |
+| `RATELIMIT_MAX_REQUESTS` | Límite general de requests por IP/minuto | `200` |
+| `RATELIMIT_WINDOW_MS` | Ventana del límite general en ms | `60000` |
+| `RATELIMIT_AUTH_MAX_REQUESTS` | Límite estricto para `/api/auth/login` y cambio de contraseña | `10` |
+| `RATELIMIT_AUTH_WINDOW_MS` | Ventana del límite estricto en ms | `60000` |
 
 ## 📄 Licencia
 

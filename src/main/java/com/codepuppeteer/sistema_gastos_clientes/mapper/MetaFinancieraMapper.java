@@ -14,6 +14,7 @@ public abstract class MetaFinancieraMapper {
     @Mapping(source = "cliente.id", target = "clienteId")
     public abstract MetaFinancieraResponse toResponse(MetaFinanciera entity);
 
+    @Mapping(source = "cliente.id", target = "clienteId")
     public abstract MetaFinancieraList toList(MetaFinanciera entity);
 
     public abstract List<MetaFinancieraList> toList(List<MetaFinanciera> entities);

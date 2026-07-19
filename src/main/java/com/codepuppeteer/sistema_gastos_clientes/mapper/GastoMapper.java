@@ -15,6 +15,8 @@ public abstract class GastoMapper {
     @Mapping(source = "categoria.id", target = "categoriaId")
     public abstract GastoResponse toResponse(Gasto gasto);
 
+    @Mapping(source = "cliente.id", target = "clienteId")
+    @Mapping(source = "categoria.id", target = "categoriaId")
     public abstract GastoList toList(Gasto gasto);
 
     public abstract List<GastoList> toList(List<Gasto> gastos);

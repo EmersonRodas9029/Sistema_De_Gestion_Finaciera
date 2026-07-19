@@ -15,6 +15,8 @@ public abstract class ReporteMapper {
     @Mapping(source = "contador.id", target = "contadorId")
     public abstract ReporteResponse toResponse(Reporte reporte);
 
+    @Mapping(source = "cliente.id", target = "clienteId")
+    @Mapping(source = "contador.id", target = "contadorId")
     public abstract ReporteList toList(Reporte reporte);
 
     public abstract List<ReporteList> toList(List<Reporte> reportes);

@@ -15,6 +15,8 @@ public abstract class GastoRecurrenteMapper {
     @Mapping(source = "categoria.id", target = "categoriaId")
     public abstract GastoRecurrenteResponse toResponse(GastoRecurrente gasto);
 
+    @Mapping(source = "cliente.id", target = "clienteId")
+    @Mapping(source = "categoria.id", target = "categoriaId")
     public abstract GastoRecurrenteList toList(GastoRecurrente gasto);
 
     public abstract List<GastoRecurrenteList> toList(List<GastoRecurrente> gastos);

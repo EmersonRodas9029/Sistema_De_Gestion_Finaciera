@@ -14,6 +14,7 @@ public interface IngresoMapper {
     @Mapping(source = "cliente.id", target = "clienteId")
     IngresoResponse toResponse(Ingreso ingreso);
 
+    @Mapping(source = "cliente.id", target = "clienteId")
     IngresoList toList(Ingreso ingreso);
 
     List<IngresoList> toList(List<Ingreso> ingresos);

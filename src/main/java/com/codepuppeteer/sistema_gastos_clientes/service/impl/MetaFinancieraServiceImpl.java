@@ -68,14 +68,10 @@ public class MetaFinancieraServiceImpl implements MetaFinancieraService {
 
     @Override
     public List<MetaFinanciera> obtenerTodasLasMetas() {
-        List<MetaFinanciera> metas = metaFinancieraRepository.findAll();
         if (!securityUtils.isContador()) {
-            Long usuarioId = securityUtils.getCurrentUser().getUsuarioId();
-            return metas.stream()
-                    .filter(m -> m.getCliente() != null && m.getCliente().getUsuario().getId().equals(usuarioId))
-                    .toList();
+            return metaFinancieraRepository.findByCliente_Usuario_Id(securityUtils.getCurrentUser().getUsuarioId());
         }
-        return metas;
+        return metaFinancieraRepository.findAll();
     }
 
     @Override

@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface PresupuestoRepository extends JpaRepository<Presupuesto, Long> {
     List<Presupuesto> findByClienteId(long clienteId);
+    List<Presupuesto> findByCliente_Usuario_Id(long usuarioId);
     List<Presupuesto> findByCategoriaId(long categoriaId);
+    List<Presupuesto> findByCategoriaIdAndCliente_Usuario_Id(long categoriaId, long usuarioId);
     boolean existsByClienteId(long clienteId);
 }
