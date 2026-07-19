@@ -1,29 +1,29 @@
-# 💰 Sistema de Gestión Financiera (Backend)
+# Sistema de Gestión Financiera (Backend)
 
 API REST para la gestión financiera **Contador–Cliente**: clientes, cuentas bancarias, gastos, ingresos, presupuestos, metas financieras, gastos recurrentes, reportes (con exportación a PDF), notificaciones y configuraciones. Sirve a [BudgEase](https://github.com/EmersonRodas9029/sistema_de_gestion_financiera_frontend), el frontend en React del mismo sistema.
 
 [![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk)](https://adoptium.net/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3-brightgreen?logo=springboot)](https://spring.io/projects/spring-boot)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?logo=mysql)](https://www.mysql.com/)
-[![Tests](https://img.shields.io/badge/tests-passing-success?logo=apachemaven)](#-tests)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](#-licencia)
+[![Tests](https://img.shields.io/badge/tests-passing-success?logo=apachemaven)](#tests)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](#licencia)
 
 ---
 
-## ✨ Características
+## Características
 
-- 🔐 **Autenticación JWT** con rate limiting general y uno más estricto para login/cambio de contraseña
-- 🛡️ **Autorización por dueño del recurso (IDOR)** en cada servicio: un `CLIENTE` solo ve/edita lo suyo, `CONTADOR` ve todo
-- 🧾 **Gestión completa** de usuarios, clientes, gastos, ingresos, presupuestos, metas y cuentas bancarias
-- 🔁 **Gastos recurrentes** con frecuencia configurable y un **scheduler diario** que genera automáticamente el gasto del día
-- 📊 **Reportes financieros** con generación de **PDF** (OpenPDF)
-- 🔔 Sistema de **notificaciones** (presupuesto excedido, recordatorios, progreso de metas, etc.)
-- 📚 **Documentación interactiva** con Swagger UI / OpenAPI
-- 🗃️ Migraciones de base de datos versionadas con **Flyway**
-- 🧩 Mapeo DTO ↔ Entidad con **MapStruct**
-- ✅ **Tests** con Spring Security real (no mocks) para las reglas de autorización
+- **Autenticación JWT** con rate limiting general y uno más estricto para login/cambio de contraseña
+- **Autorización por dueño del recurso (IDOR)** en cada servicio: un `CLIENTE` solo ve/edita lo suyo, `CONTADOR` ve todo
+- **Gestión completa** de usuarios, clientes, gastos, ingresos, presupuestos, metas y cuentas bancarias
+- **Gastos recurrentes** con frecuencia configurable y un **scheduler diario** que genera automáticamente el gasto del día
+- **Reportes financieros** con generación de **PDF** (OpenPDF)
+- Sistema de **notificaciones** (presupuesto excedido, recordatorios, progreso de metas, etc.)
+- **Documentación interactiva** con Swagger UI / OpenAPI
+- Migraciones de base de datos versionadas con **Flyway**
+- Mapeo DTO ↔ Entidad con **MapStruct**
+- **Tests** con Spring Security real (no mocks) para las reglas de autorización
 
-## 🛠️ Stack tecnológico
+## Stack tecnológico
 
 | Capa | Tecnología |
 |---|---|
@@ -38,7 +38,7 @@ API REST para la gestión financiera **Contador–Cliente**: clientes, cuentas b
 | Infraestructura | Docker / Docker Compose |
 | Build | Maven |
 
-## 🏗️ Arquitectura
+## Arquitectura
 
 ```
 Controller → Service (interface) → ServiceImpl → Repository (JPA) → MySQL
@@ -62,7 +62,7 @@ src/main/java/com/codepuppeteer/sistema_gastos_clientes/
 
 **Módulos disponibles:** Usuarios · Clientes · Categorías · Gastos · Ingresos · Presupuestos · Metas financieras · Gastos recurrentes · Cuentas bancarias · Reportes · Notificaciones · Configuraciones
 
-## 🚀 Puesta en marcha
+## Puesta en marcha
 
 ### Requisitos previos
 
@@ -96,7 +96,7 @@ La API queda disponible en `http://localhost:8080`.
 ./mvnw clean package
 ```
 
-## ✅ Tests
+## Tests
 
 ```bash
 ./mvnw test
@@ -105,19 +105,19 @@ La API queda disponible en `http://localhost:8080`.
 
 Los tests de servicios (`ClienteServiceImplTest`, `UsuarioServiceImplTest`) corren sobre un `SecurityContextHolder` real de Spring Security en vez de mockear la autorización, para que un bypass de `checkOwnership` falle en el test y no solo en producción.
 
-## 📖 Documentación de la API
+## Documentación de la API
 
 - **Interactiva:** Swagger UI en `http://localhost:8080/swagger-ui.html` (JSON crudo en `/v3/api-docs`) una vez la app está corriendo.
 - **Referencia completa:** endpoints, cuerpos de petición y tipos de datos en [`API.md`](./API.md).
 
-## 🔒 Seguridad
+## Seguridad
 
 - **Autenticación:** JWT (`JwtAuthenticationFilter`) con `RateLimitFilter` corriendo antes del filtro de autenticación. Solo `/api/auth/**` y la documentación Swagger son públicos (`permitAll()`); el resto de `/api/**` exige JWT válido (`anyRequest().authenticated()`).
 - **Autorización (IDOR):** cada `ServiceImpl` valida dueño del recurso vía `SecurityUtils.checkOwnership(...)` antes de leer, editar o borrar — incluyendo `UsuarioServiceImpl` y `ClienteServiceImpl`. El rol `CONTADOR` ve todos los recursos; `CLIENTE` solo los suyos, y no puede cambiar su propio rol ni reactivar/desactivar su cuenta.
 - **Validación:** todos los DTOs de entrada (`*Save`, `*Update`) usan Bean Validation (`@Valid`, `@NotBlank`, `@Email`, etc.) en el controller.
 - **Rate limiting:** límite general por IP y uno más estricto y separado para `/api/auth/login` y cambio de contraseña (mitiga fuerza bruta / credential stuffing).
 
-## ⚙️ Variables de entorno
+## Variables de entorno
 
 Se configuran en un `.env` local (ver [`.env.example`](./.env.example), no se commitea) o directamente en el entorno de producción:
 
@@ -137,10 +137,10 @@ Se configuran en un `.env` local (ver [`.env.example`](./.env.example), no se co
 | `RATELIMIT_AUTH_MAX_REQUESTS` | Límite estricto para `/api/auth/login` y cambio de contraseña | `10` |
 | `RATELIMIT_AUTH_WINDOW_MS` | Ventana del límite estricto en ms | `60000` |
 
-## 📄 Licencia
+## Licencia
 
 Distribuido bajo licencia Apache 2.0 (pendiente de agregar el archivo `LICENSE` al repositorio).
 
 ---
 
-Desarrollado por **Equipo Code Puppeteer** 🐙 · Frontend: [BudgEase](https://github.com/EmersonRodas9029/sistema_de_gestion_financiera_frontend)
+Desarrollado por **Equipo Code Puppeteer** · Frontend: [BudgEase](https://github.com/EmersonRodas9029/sistema_de_gestion_financiera_frontend)
