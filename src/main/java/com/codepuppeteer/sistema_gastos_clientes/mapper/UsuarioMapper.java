@@ -18,6 +18,7 @@ public abstract class UsuarioMapper {
     // Mapeo de entity a DTO de respuesta
     // cliente se resuelve aparte en UsuarioServiceImpl (Usuario no tiene referencia directa a Cliente)
     @Mapping(target = "cliente", ignore = true)
+    @Mapping(target = "contadorId", source = "contador.id")
     public abstract UsuarioResponse toResponse(Usuario usuario);
 
     // Mapeo de entity a DTO de lista

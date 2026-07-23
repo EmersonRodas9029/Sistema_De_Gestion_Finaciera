@@ -67,13 +67,48 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .map(clienteMapper::toResponse)
                 .orElse(null);
         return new UsuarioResponse(base.id(), base.username(), base.email(), base.rol(), base.activo(),
-                base.ultimoAcceso(), base.fechaCreacion(), base.fechaModificacion(), cliente);
+                base.ultimoAcceso(), base.fechaCreacion(), base.fechaModificacion(), cliente, base.contadorId(),
+                base.limiteUsuarios());
+    }
+
+    // Sudo puede acceder a cualquier usuario. Un contador solo a sí mismo y a los usuarios
+    // que él mismo afilió (contador_id) — nunca a otro contador ni a los usuarios de otro contador.
+    // Cualquier otro rol (cliente) solo puede acceder a sí mismo.
+    private boolean puedeAccederA(Usuario objetivo) {
+        if (securityUtils.isSudo()) return true;
+        Long miId = securityUtils.getCurrentUser().getUsuarioId();
+        if (objetivo.getId().equals(miId)) return true;
+        return securityUtils.isContador()
+                && objetivo.getContador() != null
+                && objetivo.getContador().getId().equals(miId);
     }
 
     @Override
     public UsuarioResponse crearUsuario(UsuarioSave usuarioDto) {
+        if (!securityUtils.isContador()) {
+            throw new ForbiddenException("Solo los contadores pueden crear usuarios");
+        }
+        if (usuarioDto.rol() == Rol.SUDO && !securityUtils.isSudo()) {
+            throw new ForbiddenException("Solo un usuario sudo puede crear otro usuario sudo");
+        }
+        if (usuarioDto.rol() == Rol.CONTADOR && !securityUtils.isSudo()) {
+            throw new ForbiddenException("Solo un usuario sudo puede crear otro usuario contador");
+        }
+        long contadorId = securityUtils.getCurrentUser().getUsuarioId();
+        Usuario contadorEntity = usuarioRepository.findById(contadorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + contadorId));
+        // El sudo tiene permisos absolutos: no está sujeto al límite de usuarios del contador.
+        // El límite es por-contador (ajustable por sudo, ver actualizarLimiteUsuarios), no una constante global.
+        // ponytail: conteo simple en vez de SELECT ... FOR UPDATE; dos altas simultáneas del
+        // mismo contador podrían colar un usuario extra en teoría. Subir a locking si eso pasa en la práctica.
+        int limite = contadorEntity.getLimiteUsuarios();
+        if (!securityUtils.isSudo() && usuarioRepository.countByContadorId(contadorId) >= limite) {
+            throw new BusinessException("Ya alcanzaste el máximo de " + limite + " usuarios creados");
+        }
+
         Usuario usuario = usuarioMapper.toEntity(usuarioDto);
         usuario.setPassword(passwordEncoder.encode(usuarioDto.password()));
+        usuario.setContador(contadorEntity);
         Usuario saved = usuarioRepository.save(usuario);
         if (saved.getRol() == Rol.CLIENTE) {
             clienteRepository.save(Cliente.builder()
@@ -95,12 +130,13 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario existente = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
 
-        boolean esContador = securityUtils.isContador();
+        // Un contador solo gestiona su propia cuenta y las que él mismo afilió; sudo gestiona cualquiera.
+        boolean puedeGestionar = securityUtils.isContador() && puedeAccederA(existente);
         boolean esPropio = securityUtils.getCurrentUser().getUsuarioId().equals(id);
-        if (!esContador && !esPropio) {
+        if (!puedeGestionar && !esPropio) {
             throw new ForbiddenException("No tienes permiso para modificar este usuario");
         }
-        if (!esContador) {
+        if (!puedeGestionar) {
             if (usuarioDto.rol() != null && usuarioDto.rol() != existente.getRol()) {
                 throw new ForbiddenException("No tienes permiso para cambiar tu rol");
             }
@@ -112,18 +148,18 @@ public class UsuarioServiceImpl implements UsuarioService {
             }
         }
 
-        if (esContador && usuarioDto.rol() != null && usuarioDto.rol() != existente.getRol()) {
+        if (puedeGestionar && usuarioDto.rol() != null && usuarioDto.rol() != existente.getRol()) {
             SECURITY_LOG.warn("Cambio de rol: usuario '{}' cambia el rol de '{}' (id={}) de {} a {}",
                     securityUtils.getCurrentUser().getUsername(), existente.getUsername(), id,
                     existente.getRol(), usuarioDto.rol());
         }
-        if (esContador && usuarioDto.activo() != null && !usuarioDto.activo().equals(existente.getActivo())) {
+        if (puedeGestionar && usuarioDto.activo() != null && !usuarioDto.activo().equals(existente.getActivo())) {
             SECURITY_LOG.warn("Cambio de estado: usuario '{}' pone activo={} en '{}' (id={})",
                     securityUtils.getCurrentUser().getUsername(), usuarioDto.activo(), existente.getUsername(), id);
         }
 
         usuarioMapper.updateFromDto(usuarioDto, existente);
-        if (esContador && usuarioDto.password() != null && !usuarioDto.password().isBlank()) {
+        if (puedeGestionar && usuarioDto.password() != null && !usuarioDto.password().isBlank()) {
             existente.setPassword(passwordEncoder.encode(usuarioDto.password()));
         }
         return toResponseConCliente(usuarioRepository.save(existente));
@@ -134,7 +170,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
 
-        if (!securityUtils.isContador() && !securityUtils.getCurrentUser().getUsuarioId().equals(id)) {
+        if (!puedeAccederA(usuario)) {
             throw new ForbiddenException("No tienes permiso para cambiar la contraseña de otro usuario");
         }
 
@@ -150,7 +186,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     public void eliminarUsuario(long id) {
         Usuario existente = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
-        if (!securityUtils.isContador() && !securityUtils.getCurrentUser().getUsuarioId().equals(id)) {
+        if (!puedeAccederA(existente)) {
             throw new ForbiddenException("No tienes permiso para desactivar este usuario");
         }
         existente.setActivo(false);
@@ -163,11 +199,11 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public void activarUsuario(long id) {
-        if (!securityUtils.isContador()) {
-            throw new ForbiddenException("No tienes permiso para reactivar usuarios");
-        }
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
+        if (!securityUtils.isContador() || !puedeAccederA(usuario)) {
+            throw new ForbiddenException("No tienes permiso para reactivar usuarios");
+        }
         usuario.setActivo(true);
         usuario.setIntentosFallidos(0);
         usuario.setBloqueadoHasta(null);
@@ -180,11 +216,11 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public void eliminarUsuarioPermanente(long id) {
-        if (!securityUtils.isContador()) {
-            throw new ForbiddenException("No tienes permiso para eliminar usuarios permanentemente");
-        }
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
+        if (!securityUtils.isContador() || !puedeAccederA(usuario)) {
+            throw new ForbiddenException("No tienes permiso para eliminar usuarios permanentemente");
+        }
 
         clienteRepository.findByUsuarioId(id).ifPresent(cliente -> {
             long clienteId = cliente.getId();
@@ -213,7 +249,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     public UsuarioResponse obtenerUsuarioPorId(long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
-        if (!securityUtils.isContador() && !securityUtils.getCurrentUser().getUsuarioId().equals(id)) {
+        if (!puedeAccederA(usuario)) {
             throw new ForbiddenException("No tienes permiso para ver este usuario");
         }
         return toResponseConCliente(usuario);
@@ -221,16 +257,24 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public List<UsuarioResponse> obtenerTodosLosUsuarios() {
-        if (!securityUtils.isContador()) {
-            return usuarioRepository.findById(securityUtils.getCurrentUser().getUsuarioId())
-                    .map(u -> List.of(toResponseConCliente(u)))
-                    .orElse(List.of());
+        long miId = securityUtils.getCurrentUser().getUsuarioId();
+        if (securityUtils.isSudo()) {
+            // ponytail: tope duro de 1000 en vez de findAll() sin límite; si el volumen de usuarios
+            // supera eso en la práctica, aquí es donde se añade paginación real de cara al frontend.
+            return usuarioRepository.findAll(PageRequest.of(0, 1000))
+                    .map(this::toResponseConCliente)
+                    .toList();
         }
-        // ponytail: tope duro de 1000 en vez de findAll() sin límite; si el volumen de usuarios
-        // supera eso en la práctica, aquí es donde se añade paginación real de cara al frontend.
-        return usuarioRepository.findAll(PageRequest.of(0, 1000))
-                .map(this::toResponseConCliente)
-                .toList();
+        if (securityUtils.isContador()) {
+            // Un contador solo ve su propia cuenta y los usuarios que él mismo afilió — nunca otro
+            // contador ni los usuarios de otro contador.
+            return usuarioRepository.findByIdOrContadorId(miId, miId).stream()
+                    .map(this::toResponseConCliente)
+                    .toList();
+        }
+        return usuarioRepository.findById(miId)
+                .map(u -> List.of(toResponseConCliente(u)))
+                .orElse(List.of());
     }
 
     @Override
@@ -253,5 +297,19 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
         usuario.setActivo(true);
         usuarioRepository.save(usuario);
+    }
+
+    @Override
+    public void actualizarLimiteUsuarios(long id, int limite) {
+        if (!securityUtils.isSudo()) {
+            throw new ForbiddenException("Solo un usuario sudo puede modificar el límite de usuarios de un contador");
+        }
+        Usuario contador = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
+        if (contador.getRol() != Rol.CONTADOR) {
+            throw new BusinessException("El límite de usuarios solo aplica a contadores");
+        }
+        contador.setLimiteUsuarios(limite);
+        usuarioRepository.save(contador);
     }
 }

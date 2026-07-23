@@ -1,6 +1,7 @@
 package com.codepuppeteer.sistema_gastos_clientes.controller.api;
 
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.CambiarPasswordRequest;
+import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.LimiteUsuariosRequest;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioResponse;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioSave;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioUpdate;
@@ -66,6 +67,14 @@ public class UsuarioController {
     @DeleteMapping("/{id}/permanente")
     public ResponseEntity<Void> deleteUsuarioPermanente(@PathVariable long id) {
         usuarioService.eliminarUsuarioPermanente(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/limite")
+    public ResponseEntity<Void> actualizarLimiteUsuarios(
+            @PathVariable long id,
+            @Valid @RequestBody LimiteUsuariosRequest request) {
+        usuarioService.actualizarLimiteUsuarios(id, request.limite());
         return ResponseEntity.noContent().build();
     }
 }

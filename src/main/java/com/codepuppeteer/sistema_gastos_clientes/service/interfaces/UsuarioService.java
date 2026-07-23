@@ -28,4 +28,6 @@ public interface UsuarioService {
     void bloquearUsuario(long id);
 
     void desbloquearUsuario(long id);
+
+    void actualizarLimiteUsuarios(long id, int limite);
 }

@@ -1,8 +1,11 @@
 package com.codepuppeteer.sistema_gastos_clientes.service;
 
+import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioResponse;
+import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioSave;
 import com.codepuppeteer.sistema_gastos_clientes.dto.usuario.UsuarioUpdate;
 import com.codepuppeteer.sistema_gastos_clientes.entity.Usuario;
 import com.codepuppeteer.sistema_gastos_clientes.enums.Rol;
+import com.codepuppeteer.sistema_gastos_clientes.exception.BusinessException;
 import com.codepuppeteer.sistema_gastos_clientes.exception.ForbiddenException;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.ClienteMapper;
 import com.codepuppeteer.sistema_gastos_clientes.mapper.UsuarioMapper;
@@ -22,8 +25,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -65,7 +70,7 @@ class UsuarioServiceImplTest {
         cliente.setRol(Rol.CLIENTE);
         cliente.setActivo(false);
 
-        when(usuarioRepository.findById(42L)).thenReturn(Optional.of(cliente));
+        lenient().when(usuarioRepository.findById(42L)).thenReturn(Optional.of(cliente));
     }
 
     @AfterEach
@@ -117,5 +122,131 @@ class UsuarioServiceImplTest {
     void unClienteNoPuedeVerOtroUsuarioPorId() {
         loginComo(99L, Rol.CLIENTE);
         assertThrows(ForbiddenException.class, () -> service.obtenerUsuarioPorId(42L));
+    }
+
+    @Test
+    void unClienteNoPuedeCrearUsuarios() {
+        loginComo(99L, Rol.CLIENTE);
+        var dto = new UsuarioSave("nuevo", "password123", null, Rol.CLIENTE, null, null, null, null, null, null);
+        assertThrows(ForbiddenException.class, () -> service.crearUsuario(dto));
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    void unContadorNoPuedeSuperarElMaximoDeUsuariosCreados() {
+        loginComo(7L, Rol.CONTADOR);
+        Usuario contadorUser = new Usuario();
+        contadorUser.setId(7L);
+        contadorUser.setRol(Rol.CONTADOR);
+        contadorUser.setLimiteUsuarios(5);
+        when(usuarioRepository.findById(7L)).thenReturn(Optional.of(contadorUser));
+        when(usuarioRepository.countByContadorId(7L)).thenReturn(5L);
+        var dto = new UsuarioSave("nuevo", "password123", null, Rol.CLIENTE, null, null, null, null, null, null);
+        assertThrows(BusinessException.class, () -> service.crearUsuario(dto));
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    void unContadorNoPuedeCrearUnUsuarioSudo() {
+        loginComo(7L, Rol.CONTADOR);
+        var dto = new UsuarioSave("nuevo", "password123", null, Rol.SUDO, null, null, null, null, null, null);
+        assertThrows(ForbiddenException.class, () -> service.crearUsuario(dto));
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    void unContadorNoPuedeCrearOtroContador() {
+        loginComo(7L, Rol.CONTADOR);
+        var dto = new UsuarioSave("nuevo", "password123", null, Rol.CONTADOR, null, null, null, null, null, null);
+        assertThrows(ForbiddenException.class, () -> service.crearUsuario(dto));
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    void unSudoNoEstaLimitadoPorElMaximoDeUsuarios() {
+        loginComo(1L, Rol.SUDO);
+        Usuario sudoUser = new Usuario();
+        sudoUser.setId(1L);
+        sudoUser.setRol(Rol.SUDO);
+        lenient().when(usuarioRepository.findById(1L)).thenReturn(Optional.of(sudoUser));
+        var dto = new UsuarioSave("nuevo", "password123", null, Rol.CLIENTE, null, null, null, null, null, null);
+        var entidad = new Usuario();
+        entidad.setId(200L);
+        entidad.setRol(Rol.CLIENTE);
+        when(usuarioMapper.toEntity(dto)).thenReturn(entidad);
+        when(usuarioRepository.save(any())).thenReturn(entidad);
+        when(usuarioMapper.toResponse(entidad)).thenReturn(
+                new UsuarioResponse(200L, "nuevo", null, Rol.CLIENTE, true, null, null, null, null, null, null));
+
+        service.crearUsuario(dto);
+
+        verify(usuarioRepository).save(any());
+    }
+
+    @Test
+    void unContadorNoPuedeCambiarSuPropioLimiteDeUsuarios() {
+        loginComo(7L, Rol.CONTADOR);
+        assertThrows(ForbiddenException.class, () -> service.actualizarLimiteUsuarios(7L, 10));
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    void unSudoPuedeCambiarElLimiteDeUsuariosDeUnContador() {
+        loginComo(1L, Rol.SUDO);
+        Usuario contadorUser = new Usuario();
+        contadorUser.setId(7L);
+        contadorUser.setRol(Rol.CONTADOR);
+        contadorUser.setLimiteUsuarios(5);
+        when(usuarioRepository.findById(7L)).thenReturn(Optional.of(contadorUser));
+
+        service.actualizarLimiteUsuarios(7L, 10);
+
+        assertEquals(10, contadorUser.getLimiteUsuarios());
+        verify(usuarioRepository).save(contadorUser);
+    }
+
+    @Test
+    void unSudoNoPuedeCambiarElLimiteDeUnUsuarioQueNoEsContador() {
+        loginComo(1L, Rol.SUDO);
+        when(usuarioRepository.findById(42L)).thenReturn(Optional.of(cliente));
+        assertThrows(BusinessException.class, () -> service.actualizarLimiteUsuarios(42L, 10));
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    void unContadorSoloVeSuPropiaCuentaYSusUsuariosAfiliados() {
+        loginComo(7L, Rol.CONTADOR);
+        Usuario yoMismo = new Usuario();
+        yoMismo.setId(7L);
+        yoMismo.setRol(Rol.CONTADOR);
+        Usuario miAfiliado = new Usuario();
+        miAfiliado.setId(100L);
+        miAfiliado.setRol(Rol.CLIENTE);
+        miAfiliado.setContador(yoMismo);
+        when(usuarioRepository.findByIdOrContadorId(7L, 7L)).thenReturn(java.util.List.of(yoMismo, miAfiliado));
+        lenient().when(usuarioMapper.toResponse(yoMismo)).thenReturn(
+                new UsuarioResponse(7L, "yo", null, Rol.CONTADOR, true, null, null, null, null, null, 5));
+        lenient().when(usuarioMapper.toResponse(miAfiliado)).thenReturn(
+                new UsuarioResponse(100L, "afiliado", null, Rol.CLIENTE, true, null, null, null, null, 7L, null));
+
+        var resultado = service.obtenerTodosLosUsuarios();
+
+        assertEquals(2, resultado.size());
+        verify(usuarioRepository, never()).findAll(any(org.springframework.data.domain.PageRequest.class));
+    }
+
+    @Test
+    void unContadorNoPuedeVerElUsuarioDeOtroContador() {
+        loginComo(7L, Rol.CONTADOR);
+        Usuario otroContador = new Usuario();
+        otroContador.setId(8L);
+        otroContador.setRol(Rol.CONTADOR);
+        Usuario usuarioAjeno = new Usuario();
+        usuarioAjeno.setId(55L);
+        usuarioAjeno.setRol(Rol.CLIENTE);
+        usuarioAjeno.setContador(otroContador);
+        when(usuarioRepository.findById(55L)).thenReturn(Optional.of(usuarioAjeno));
+
+        assertThrows(ForbiddenException.class, () -> service.obtenerUsuarioPorId(55L));
     }
 }

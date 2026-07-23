@@ -46,9 +46,17 @@ public class SecurityUtils {
         return (UsuarioDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
+    // SUDO hereda todos los permisos de CONTADOR: en vez de repetir "|| isSudo()" en cada
+    // chequeo de autorización del sistema, isContador() ya cubre ambos roles en un solo lugar.
     public boolean isContador() {
         return getCurrentUser().getAuthorities().stream()
-                .anyMatch(authority -> authority.getAuthority().equals("ROLE_CONTADOR"));
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_CONTADOR")
+                        || authority.getAuthority().equals("ROLE_SUDO"));
+    }
+
+    public boolean isSudo() {
+        return getCurrentUser().getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_SUDO"));
     }
 
     public void checkOwnership(Cliente cliente) {

@@ -15,5 +15,7 @@ public record UsuarioResponse(
         LocalDateTime ultimoAcceso,
         LocalDateTime fechaCreacion,
         LocalDateTime fechaModificacion,
-        ClienteResponse cliente
+        ClienteResponse cliente,
+        Long contadorId,
+        Integer limiteUsuarios
 ) {}
