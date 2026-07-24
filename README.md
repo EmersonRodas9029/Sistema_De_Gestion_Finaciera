@@ -1,4 +1,4 @@
-# Sistema de Gestión Financiera (Backend)
+# BudgEase — Sistema de Gestión Financiera (Backend)
 
 API REST para la gestión financiera **Contador–Cliente**: clientes, cuentas bancarias, gastos, ingresos, presupuestos, metas financieras, gastos recurrentes, reportes (con exportación a PDF), notificaciones y configuraciones. Sirve a [BudgEase](https://github.com/EmersonRodas9029/sistema_de_gestion_financiera_frontend), el frontend en React del mismo sistema.
 
