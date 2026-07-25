@@ -39,6 +39,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         // Documentación de la API (Swagger UI / OpenAPI JSON), sin datos de negocio
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
+                        // Healthcheck de la plataforma de deploy (Railway/Render), sin datos de negocio
+                        .requestMatchers("/actuator/health").permitAll()
                         // Todo lo demás requiere JWT válido; la autorización por dueño
                         // del recurso se aplica dentro de cada servicio (ver ForbiddenException)
                         .anyRequest().authenticated()
